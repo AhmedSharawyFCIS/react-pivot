@@ -6,8 +6,12 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "plotly.js": "^1.56.0",
+    "plotly.js-dist": "^1.56.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-pivottable": "^0.10.0",
+    "react-plotly.js": "^2.5.0",
     "react-scripts": "3.4.3"
   },
   "scripts": {
