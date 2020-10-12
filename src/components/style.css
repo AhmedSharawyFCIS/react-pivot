@@ -1,0 +1,50 @@
+body{
+
+    position: relative;
+}
+.pvtRenderers{
+    
+    background-color: red !important;
+    position: absolute;
+    top: 0;
+}
+
+.pvtUi{
+
+    position: absolute !important;
+    top: 300px;
+}
+/* .pvtRows{
+
+    background-color: red !important;
+} */
+
+/* .pvtHorizList{
+
+    width: 1200px;
+} */
+/* 
+.pvtCols{
+
+    min-width: 1200px;
+    min-height: 800px;
+    background: blue;
+}
+
+.pvtVertList{
+
+    width: 50px;
+    height: 50px;
+    background: red;
+    
+}
+
+.pvtHorizList{
+
+    width: 500px;
+    min-height: 200px;
+    background: green;
+    display: block;
+} */
+
+
