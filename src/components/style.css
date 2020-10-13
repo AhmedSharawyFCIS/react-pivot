@@ -4,16 +4,33 @@ body{
 }
 .pvtRenderers{
     
-    background-color: red !important;
-    position: absolute;
-    top: 0;
+    opacity: 0;
 }
 
 .pvtUi{
 
-    position: absolute !important;
-    top: 300px;
+    /* position: absolute !important;
+    top: 300px; */
+    width: 100%;
+    margin-top: 100px;
 }
+
+.buttons{
+
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+
+.pvtVals{
+
+    opacity: 0;
+    border: none;
+}
+
+
 /* .pvtRows{
 
     background-color: red !important;
