@@ -14,7 +14,7 @@ const PlotlyRenderers = createPlotlyRenderers(Plot);
 class App extends Component {
    
 
-    state = {data:en2,rows:[],cols:[],rendererName:"Table",aggregatorName:"Count",aggregatorFilters:[]}
+    state = {data:en_list,rows:[],cols:[],rendererName:"Table",aggregatorName:"Count",aggregatorFilters:[],filter1:"",filter2:""}
     excludeArr = ["Count","Count as fraction of Total"]
     data = (callback)  => {
         
@@ -33,21 +33,54 @@ class App extends Component {
 
          }
 
-    aggregatorFilterHandler = (value) => {
+    aggregatorFilterHandler = (value,filterNum) => {
+
 
         if(this.state.aggregatorName !== "Sum over Sum")
         {
             
-            this.setState({aggregatorFilter:[value]})
+            this.setState({aggregatorFilters:[value],filter1:value})
         }
 
         else
         {
+            let arr = []
+            if(filterNum == 1)
+            {
+                if(this.state.filter2 !== "")
+                {
+                    arr = [value,this.state.filter2]
+                }
 
+                else
+                {
+                    arr = [value]
+                }
+                 
+                 this.setState({aggregatorFilters:arr,filter1:value})
+            }
+
+            else
+            {
+                if(this.state.filter1 !== "")
+                {
+                    arr = [this.state.filter1,value]
+                }
+                else
+                {
+                    arr = [value]
+                }
+                
+                this.setState({aggregatorFilters:arr,filter2:value})
+            }
+            
+            
+            
         }
     }
     render() {
 
+        console.log(this.state.aggregatorFilters)
         var count = (data, rowKey, colKey) => {
             return {
               count: 0,
@@ -65,10 +98,10 @@ class App extends Component {
                 <div className="buttons">
                     <button onClick={()=>{
                         
-                        if(this.state.data.length < 2000)
+                        if(this.state.data.length > 2000)
                         {
 
-                            this.setState({data:en_list})
+                            this.setState({data:en2})
                         }
 
                         else
@@ -81,6 +114,21 @@ class App extends Component {
 
                     <button onClick={this.btnHandler}>
                         change dimensions
+                    </button>
+
+                    <button onClick={()=>{
+
+
+const lab= document.querySelectorAll('.pvtTotal');
+                        lab.forEach( function(cur,i,arr){
+                            console.log(parseInt(cur.innerHTML))
+                            if(parseInt(cur.innerHTML)>3){
+                                cur.style.backgroundColor='blue'
+                            }
+                        });
+                        this.setState({data:en_list})
+                    }}>
+                        Filter
                     </button>
 
                     <select onChange={(e)=>this.setState({rendererName:e.target.value})}>
@@ -134,7 +182,7 @@ class App extends Component {
 
                     {this.excludeArr.indexOf(this.state.aggregatorName) == -1 &&
                     <select 
-                    onChange={e=>this.aggregatorFilterHandler(e.target.value)} 
+                    onChange={e=>this.aggregatorFilterHandler(e.target.value,1)} 
                     value={this.state.aggregatorFilter}>
                         <option style={{display:"none"}}></option>
                         {
@@ -147,7 +195,7 @@ class App extends Component {
                     </select>}
                     {this.state.aggregatorName == "Sum over Sum"&&
                     <select 
-                    onChange={e=>this.aggregatorFilterHandler(e.target.value)} 
+                    onChange={e=>this.aggregatorFilterHandler(e.target.value,2)} 
                     value={this.state.aggregatorFilter}>
                     <option style={{display:"none"}}></option>
                     {
@@ -173,7 +221,7 @@ class App extends Component {
 
                     // aggregators={{cc: function(x) { return count}}}
                     aggregatorName={this.state.aggregatorName}
-                    vals={["merchant_code","damen_fee"]} // aggregator filter attribute
+                    vals={this.state.aggregatorFilters} // aggregator filter attribute
                     rendererName =  {this.state.rendererName}      
                     {...this.state}
                     /> 
