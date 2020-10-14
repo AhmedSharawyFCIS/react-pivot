@@ -119,6 +119,9 @@ class App extends Component {
             return row;
           });
 
+
+        //   result.push({"dsdsds":5454})
+
           
 
           result.unshift(headerRow);
@@ -142,20 +145,20 @@ class App extends Component {
       }
 
 
-      componentDidMount()
-      {
-          setInterval(()=>{
+    //   componentDidMount()
+    //   {
+    //       setInterval(()=>{
 
             
 
-            let new_data = [...this.state.data]
+    //         let new_data = [...this.state.data]
 
-            new_data[0] = {...new_data[0],total_amount:new_data[0].total_amount + 100}
+    //         new_data[0] = {...new_data[0],total_amount:new_data[0].total_amount + 100}
 
-            this.setState({data:new_data})
+    //         this.setState({data:new_data})
 
-          },2000)
-      }
+    //       },2000)
+    //   }
     render() {
 
 
@@ -307,8 +310,7 @@ class App extends Component {
                     aggregatorName={this.state.aggregatorName}
                     // vals={this.state.aggregatorFilters} // aggregator filter attribute
                     rendererName =  {this.state.rendererName}      
-                    allowExcelExport={true}
-                    ref={d => this.pivotObj = d}
+                    hiddenAttributes = {[...this.state.rows,...this.state.cols]}
                     {...this.state}
                     /> 
             </div>
