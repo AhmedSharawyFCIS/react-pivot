@@ -7,6 +7,7 @@ import createPlotlyRenderers from 'react-pivottable/PlotlyRenderers';
 import Plotly from 'plotly.js-dist';
 import {en_list,en2} from './data'
 import './style.css';
+import { PivotData } from 'react-pivottable/Utilities';
 const Plot = createPlotlyComponent(Plotly);
 
 const PlotlyRenderers = createPlotlyRenderers(Plot);
@@ -14,7 +15,7 @@ const PlotlyRenderers = createPlotlyRenderers(Plot);
 class App extends Component {
    
 
-    state = {data:en_list,rows:[],cols:[],rendererName:"Table",aggregatorName:"Count",aggregatorFilters:[],filter1:"",filter2:""}
+    state = {data:en_list,rows:[],cols:[],rendererName:"Table",aggregatorName:"Count",vals:[],filter1:"",filter2:""}
     excludeArr = ["Count","Count as fraction of Total"]
     data = (callback)  => {
         
@@ -31,7 +32,7 @@ class App extends Component {
                                     
         this.setState({rows:[...this.state.rows,"merchant_code","billername","gov_code"],cols:[...this.state.cols,"created_at","sectorname","total_amount"]})
 
-         }
+    }
 
     aggregatorFilterHandler = (value,filterNum) => {
 
@@ -39,7 +40,7 @@ class App extends Component {
         if(this.state.aggregatorName !== "Sum over Sum")
         {
             
-            this.setState({aggregatorFilters:[value],filter1:value})
+            this.setState({vals:[value],filter1:value})
         }
 
         else
@@ -57,7 +58,7 @@ class App extends Component {
                     arr = [value]
                 }
                  
-                 this.setState({aggregatorFilters:arr,filter1:value})
+                 this.setState({vals:arr,filter1:value})
             }
 
             else
@@ -71,16 +72,94 @@ class App extends Component {
                     arr = [value]
                 }
                 
-                this.setState({aggregatorFilters:arr,filter2:value})
+                this.setState({vals:arr,filter2:value})
             }
             
             
             
         }
     }
+
+     exportdata = () => {
+        if(this.state.data.length > 0){
+          var pivotData = new PivotData(this.state);
+          
+          var rowKeys = pivotData.getRowKeys();
+          var colKeys = pivotData.getColKeys();
+          if (rowKeys.length === 0) {
+            rowKeys.push([]);
+          }
+          if (colKeys.length === 0) {
+            colKeys.push([]);
+          }
+
+          
+
+          var headerRow = pivotData.props.rows.map(function (r) {
+            return r;
+          });
+          if (colKeys.length === 1 && colKeys[0].length === 0) {
+            headerRow.push(this.state.aggregatorName);
+          } else {
+            colKeys.map(function (c) {
+              return headerRow.push(c.join('-'));
+            });
+          }
+
+          
+
+          var result = rowKeys.map(function (r) {
+            var row = r.map(function (x) {
+              return x;
+            });
+            colKeys.map(function (c) {
+              var v = pivotData.getAggregator(r, c).value();
+              row.push(v ? v : '');
+            });
+            return row;
+          });
+
+          
+
+          result.unshift(headerRow);
+          
+          var FinalResult= (result.map(function (r) {
+            return r.join(',');
+          }).join('\n'));
+
+          const element = document.createElement("a");
+          const file = new Blob([FinalResult], {type: 'text/plain'});
+          element.href = URL.createObjectURL(file);
+          element.download = "myFile.csv";
+          document.body.appendChild(element); // Required for this to work in FireFox
+          element.click()
+
+          
+        }
+        else{
+          alert("No Selections Made")
+        }
+      }
+
+
+      componentDidMount()
+      {
+          setInterval(()=>{
+
+            
+
+            let new_data = [...this.state.data]
+
+            new_data[0] = {...new_data[0],total_amount:new_data[0].total_amount + 100}
+
+            this.setState({data:new_data})
+
+          },2000)
+      }
     render() {
 
-        console.log(this.state.aggregatorFilters)
+
+        // console.log("Filter 1",typeof this.state.filter1)
         var count = (data, rowKey, colKey) => {
             return {
               count: 0,
@@ -96,6 +175,11 @@ class App extends Component {
             <div>
 
                 <div className="buttons">
+
+                    
+                    <button onClick={this.exportdata}>
+                        export
+                    </button>
                     <button onClick={()=>{
                         
                         if(this.state.data.length > 2000)
@@ -119,7 +203,7 @@ class App extends Component {
                     <button onClick={()=>{
 
 
-const lab= document.querySelectorAll('.pvtTotal');
+                        const lab= document.querySelectorAll('.pvtTotal');
                         lab.forEach( function(cur,i,arr){
                             console.log(parseInt(cur.innerHTML))
                             if(parseInt(cur.innerHTML)>3){
@@ -151,7 +235,7 @@ const lab= document.querySelectorAll('.pvtTotal');
                     </select>
 
 
-                    <select onChange={(e)=>this.setState({aggregatorName:e.target.value})}>
+                    <select onChange={(e)=>this.setState({aggregatorName:e.target.value,vals:[]})}>
                         <option>Count</option>
 
                         <option>Count Unique Values</option>
@@ -183,7 +267,7 @@ const lab= document.querySelectorAll('.pvtTotal');
                     {this.excludeArr.indexOf(this.state.aggregatorName) == -1 &&
                     <select 
                     onChange={e=>this.aggregatorFilterHandler(e.target.value,1)} 
-                    value={this.state.aggregatorFilter}>
+                    value={this.state.filter1}>
                         <option style={{display:"none"}}></option>
                         {
                             Object.keys(this.state.data[0]).map(key=>{
@@ -196,7 +280,7 @@ const lab= document.querySelectorAll('.pvtTotal');
                     {this.state.aggregatorName == "Sum over Sum"&&
                     <select 
                     onChange={e=>this.aggregatorFilterHandler(e.target.value,2)} 
-                    value={this.state.aggregatorFilter}>
+                    value={this.state.filter1}>
                     <option style={{display:"none"}}></option>
                     {
                         Object.keys(this.state.data[0]).map(key=>{
@@ -211,7 +295,7 @@ const lab= document.querySelectorAll('.pvtTotal');
                     data={this.data}
                     onChange={s => {
 
-                        console.log("table data",s.rows)
+                        console.log("table data",s)
                         this.setState(s)
                     }}
                     renderers={Object.assign({}, TableRenderers, PlotlyRenderers)}
@@ -221,8 +305,10 @@ const lab= document.querySelectorAll('.pvtTotal');
 
                     // aggregators={{cc: function(x) { return count}}}
                     aggregatorName={this.state.aggregatorName}
-                    vals={this.state.aggregatorFilters} // aggregator filter attribute
+                    // vals={this.state.aggregatorFilters} // aggregator filter attribute
                     rendererName =  {this.state.rendererName}      
+                    allowExcelExport={true}
+                    ref={d => this.pivotObj = d}
                     {...this.state}
                     /> 
             </div>
