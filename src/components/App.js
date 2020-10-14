@@ -318,6 +318,7 @@ class App extends Component {
                     rendererName =  {this.state.rendererName}      
                     allowExcelExport={true}
                     ref={d => this.pivotObj = d}
+                    hiddenAttributes={[...this.state.rows,...this.state.cols]}
                     {...this.state}
                     /> 
             </div>
