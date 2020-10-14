@@ -99,7 +99,9 @@ class App extends Component {
             return r;
           });
           if (colKeys.length === 1 && colKeys[0].length === 0) {
-            headerRow.push(this.state.aggregatorName);
+            // headerRow.push(this.state.aggregatorName);
+
+            headerRow.push("Totals");
           } else {
             colKeys.map(function (c) {
               return headerRow.push(c.join('-'));
@@ -145,20 +147,50 @@ class App extends Component {
       }
 
 
-    //   componentDidMount()
-    //   {
-    //       setInterval(()=>{
+      componentDidMount()
+      {
+          setInterval(()=>{
 
             
 
-    //         let new_data = [...this.state.data]
+            let new_data = [...this.state.data]
 
-    //         new_data[0] = {...new_data[0],total_amount:new_data[0].total_amount + 100}
+            new_data[0] = {...new_data[0],total_amount:new_data[0].total_amount + 100}
 
-    //         this.setState({data:new_data})
+            new_data[5] = {...new_data[5],total_amount:new_data[5].total_amount + 150}
 
-        //   },2000)
-    //   }
+
+            new_data[10] = {...new_data[10],total_amount:new_data[10].total_amount + 100}
+
+
+            new_data[11] = {...new_data[11],total_amount:new_data[11].total_amount + 200}
+
+
+            new_data[13] = {...new_data[13],total_amount:new_data[13].total_amount + 300}
+
+            new_data[20] = {...new_data[20],total_amount:new_data[20].total_amount + 1000}
+
+
+            new_data[7] = {...new_data[7],total_amount:new_data[7].total_amount + 100}
+
+            new_data[9] = {...new_data[9],total_amount:new_data[9].total_amount + 150}
+
+
+            new_data[12] = {...new_data[12],total_amount:new_data[12].total_amount + 100}
+
+
+            new_data[27] = {...new_data[27],total_amount:new_data[27].total_amount + 200}
+
+
+            new_data[19] = {...new_data[19],total_amount:new_data[19].total_amount + 300}
+
+            new_data[2] = {...new_data[2],total_amount:new_data[2].total_amount + 1000}
+
+
+            this.setState({data:new_data})
+
+          },1000)
+      }
       hideHandler=()=>{
         document.querySelector('.pvtCols').style.display="none"
         document.querySelector('.pvtRows').style.display="none"
@@ -189,7 +221,7 @@ class App extends Component {
 
                     
                     <button onClick={this.exportdata}>
-                        export
+                        Export to Excel
                     </button>
                     <button onClick={()=>{
                         
@@ -223,7 +255,7 @@ class App extends Component {
                         });
                         this.setState({data:en_list})
                     }}>
-                        Filter
+                        Highlighter
                     </button>
 
                     <select onChange={(e)=>this.setState({rendererName:e.target.value})}>
@@ -300,7 +332,7 @@ class App extends Component {
                         })
                     }
                     </select>}
-<button onClick={()=>this. hideHandler()}>Table</button>
+                <button onClick={()=>this. hideHandler()}>Hide Attributes</button>
                     
                  </div>
                 <PivotTableUI
