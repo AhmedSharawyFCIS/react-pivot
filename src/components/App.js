@@ -156,6 +156,14 @@ class App extends Component {
 
           },2000)
       }
+      hideHandler=()=>{
+        document.querySelector('.pvtCols').style.display="none"
+        document.querySelector('.pvtRows').style.display="none"
+
+        document.querySelector('.pvtVertList').style.display="none"
+
+
+    }
     render() {
 
 
@@ -289,6 +297,7 @@ class App extends Component {
                         })
                     }
                     </select>}
+<button onClick={()=>this. hideHandler()}>Table</button>
                     
                  </div>
                 <PivotTableUI
