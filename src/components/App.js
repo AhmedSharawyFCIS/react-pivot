@@ -6,6 +6,7 @@ import createPlotlyComponent from 'react-plotly.js/factory';
 import createPlotlyRenderers from 'react-pivottable/PlotlyRenderers';
 import Plotly from 'plotly.js-dist';
 import {en_list,en2} from './data'
+import Config from './config';
 import './style.css';
 import { PivotData } from 'react-pivottable/Utilities';
 const Plot = createPlotlyComponent(Plotly);
@@ -15,13 +16,19 @@ const PlotlyRenderers = createPlotlyRenderers(Plot);
 class App extends Component {
    
 
-    state = {data:en_list,rows:[],cols:[],rendererName:"Table",aggregatorName:"Count",vals:[],filter1:"",filter2:""}
+    state = {dataa:en_list,rows:[],cols:[],rendererName:"Table",aggregatorName:"sum_square",vals:[],filter1:"",filter2:""}
     excludeArr = ["Count","Count as fraction of Total"]
     data = (callback)  => {
         
-         this.state.data.map(item=>{
+        console.log("hi")
+         this.state.dataa.map(item=>{
 
-            return callback(item)
+            let new_obj = {}
+            Object.keys(item).map(key=>{
+            
+              new_obj = {...new_obj,[Config[key].Ar_name]:item[key]}
+            })
+            return callback(new_obj)
         })   
       
 
@@ -81,7 +88,7 @@ class App extends Component {
     }
 
      exportdata = () => {
-        if(this.state.data.length > 0){
+        if(this.state.dataa.length > 0){
           var pivotData = new PivotData(this.state);
           
           var rowKeys = pivotData.getRowKeys();
@@ -153,7 +160,7 @@ class App extends Component {
 
             
 
-            let new_data = [...this.state.data]
+            let new_data = [...this.state.dataa]
 
             new_data[0] = {...new_data[0],total_amount:new_data[0].total_amount + 100}
 
@@ -203,14 +210,27 @@ class App extends Component {
 
 
         // console.log("Filter 1",typeof this.state.filter1)
-        var count = (data, rowKey, colKey) => {
-            return {
-              count: 0,
-              push: function(record) { this.count +=record.x + record.y; },
-              value: function() { return this.count; },
-              format: function(x) { return x; },
+        // var count = (data, rowKey, colKey) => {
+        //     return {
+        //       sum:0,
+        //       count: 0,
+        //       push: function(record) { this.sum+= parseFloat(record.damen_fee);this.count++},
+        //       value: function() { return 0; },
+        //       format: function(x) { return  this.sum + " / " + this.count; },
+        //    };
+        //   };
+
+          var sum_square = (data, rowKey, colKey) => {
+              let filter1= this.state.filter1
+              return {
+                  
+              sum:0,
+              push: function(record) { this.sum+= parseFloat(record[filter1])},
+              value: function() { return 0; },
+              format: function(x) { return  Math.sqrt(this.sum) },
            };
           };
+
 
         return (
 
@@ -225,15 +245,15 @@ class App extends Component {
                     </button>
                     <button onClick={()=>{
                         
-                        if(this.state.data.length > 2000)
+                        if(this.state.dataa.length > 2000)
                         {
 
-                            this.setState({data:en2})
+                            this.setState({dataa:en2})
                         }
 
                         else
                         {
-                            this.setState({data:en2})
+                            this.setState({dataa:en2})
                         }
                         
                     }}>Change Data</button>
@@ -278,7 +298,7 @@ class App extends Component {
                     </select>
 
 
-                    <select onChange={(e)=>this.setState({aggregatorName:e.target.value,vals:[]})}>
+                    <select onChange={(e)=>this.setState({aggregatorName:e.target.value,vals:[]})} value={this.state.aggregatorName}>
                         <option>Count</option>
 
                         <option>Count Unique Values</option>
@@ -305,6 +325,7 @@ class App extends Component {
                         <option>Sum as Fraction of Rows</option>
 
                         <option>Sum as Fraction of Columns</option>
+                        <option>sum_square</option>
                     </select>
 
                     {this.excludeArr.indexOf(this.state.aggregatorName) == -1 &&
@@ -313,7 +334,7 @@ class App extends Component {
                     value={this.state.filter1}>
                         <option style={{display:"none"}}></option>
                         {
-                            Object.keys(this.state.data[0]).map(key=>{
+                            Object.keys(this.state.dataa[0]).map(key=>{
 
                                 return <option>{key}</option>
                             })
@@ -326,7 +347,7 @@ class App extends Component {
                     value={this.state.filter1}>
                     <option style={{display:"none"}}></option>
                     {
-                        Object.keys(this.state.data[0]).map(key=>{
+                        Object.keys(this.state.dataa[0]).map(key=>{
 
                             return <option>{key}</option>
                         })
@@ -340,14 +361,25 @@ class App extends Component {
                     onChange={s => {
 
                         console.log("table data",s)
+                        if(s.rows.includes("damen_fee"))
+                        {
+                            let data = s.rows
+                            let index = data.indexOf("damen_fee")
+                            console.log(index)
+                            data.splice(index,1)
+                            console.log(data)
+                            // this.setState({rows:data})
+                            this.setState(s)
+                            return
+                        }
                         this.setState(s)
                     }}
                     renderers={Object.assign({}, TableRenderers, PlotlyRenderers)}
                     rows = {this.state.rows}
                     cols={this.state.cols}
-                    // // aggregators={{cc: function(x) { return count}, dd: function(x) { return count}}}
+                    //  aggregators={{cc: function(x) { return count}, dd: function(x) { return count}}}
 
-                    // aggregators={{cc: function(x) { return count}}}
+                    aggregators={{sum_square: function(x) { return sum_square}}}
                     aggregatorName={this.state.aggregatorName}
                     // vals={this.state.aggregatorFilters} // aggregator filter attribute
                     rendererName =  {this.state.rendererName}      
