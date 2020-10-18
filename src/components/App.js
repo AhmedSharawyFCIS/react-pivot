@@ -16,17 +16,22 @@ const PlotlyRenderers = createPlotlyRenderers(Plot);
 class App extends Component {
    
 
-    state = {dataa:en_list,rows:[],cols:[],rendererName:"Table",aggregatorName:"sum_square",vals:[],filter1:"",filter2:""}
+    state = {dataa:[...en_list,...en_list],rows:[],cols:[],rendererName:"Table",aggregatorName:"sum_square",vals:[],filter1:"",filter2:"",lang:"En_name"}
     excludeArr = ["Count","Count as fraction of Total"]
+
+    measures = ["total_amount","total_revenue","number_of_transactions"]
+
+    chosen_measures = ["total_amount","total_revenue"]
+
     data = (callback)  => {
         
-        console.log("hi")
+       
          this.state.dataa.map(item=>{
 
             let new_obj = {}
             Object.keys(item).map(key=>{
             
-              new_obj = {...new_obj,[Config[key].Ar_name]:item[key]}
+              new_obj = {...new_obj,[Config[key][this.state.lang]]:item[key]}
             })
             return callback(new_obj)
         })   
@@ -34,7 +39,33 @@ class App extends Component {
 
         // this.setState({data:englishData})
     }
+
+
+    reformatData = () => {
+
+
+
+        this.state.dataa.map(item=>{
+            let temp = []
+            let new_obj = {}
+            let flag = false
+            Object.keys(item).map(key=>{
+            
+                if(this.measures.includes(key) && flag == false)
+                {
+                    if(this.chosen_measures.includes(key))
+                    {
+                        new_obj = {...new_obj,[key]:item[key]}
+                    }
+                }
+              new_obj = {...new_obj,[Config[key][this.state.lang]]:key}
+            })
+
+        })
+    }
      
+
+   
     btnHandler = ()=>{
                                     
         this.setState({rows:[...this.state.rows,"merchant_code","billername","gov_code"],cols:[...this.state.cols,"created_at","sectorname","total_amount"]})
@@ -154,50 +185,50 @@ class App extends Component {
       }
 
 
-      componentDidMount()
-      {
-          setInterval(()=>{
+    //   componentDidMount()
+    //   {
+    //       setInterval(()=>{
 
             
 
-            let new_data = [...this.state.dataa]
+    //         let new_data = [...this.state.dataa]
 
-            new_data[0] = {...new_data[0],total_amount:new_data[0].total_amount + 100}
+    //         new_data[0] = {...new_data[0],total_amount:new_data[0].total_amount + 100}
 
-            new_data[5] = {...new_data[5],total_amount:new_data[5].total_amount + 150}
-
-
-            new_data[10] = {...new_data[10],total_amount:new_data[10].total_amount + 100}
+    //         new_data[5] = {...new_data[5],total_amount:new_data[5].total_amount + 150}
 
 
-            new_data[11] = {...new_data[11],total_amount:new_data[11].total_amount + 200}
+    //         new_data[10] = {...new_data[10],total_amount:new_data[10].total_amount + 100}
 
 
-            new_data[13] = {...new_data[13],total_amount:new_data[13].total_amount + 300}
-
-            new_data[20] = {...new_data[20],total_amount:new_data[20].total_amount + 1000}
+    //         new_data[11] = {...new_data[11],total_amount:new_data[11].total_amount + 200}
 
 
-            new_data[7] = {...new_data[7],total_amount:new_data[7].total_amount + 100}
+    //         new_data[13] = {...new_data[13],total_amount:new_data[13].total_amount + 300}
 
-            new_data[9] = {...new_data[9],total_amount:new_data[9].total_amount + 150}
-
-
-            new_data[12] = {...new_data[12],total_amount:new_data[12].total_amount + 100}
+    //         new_data[20] = {...new_data[20],total_amount:new_data[20].total_amount + 1000}
 
 
-            new_data[27] = {...new_data[27],total_amount:new_data[27].total_amount + 200}
+    //         new_data[7] = {...new_data[7],total_amount:new_data[7].total_amount + 100}
+
+    //         new_data[9] = {...new_data[9],total_amount:new_data[9].total_amount + 150}
 
 
-            new_data[19] = {...new_data[19],total_amount:new_data[19].total_amount + 300}
-
-            new_data[2] = {...new_data[2],total_amount:new_data[2].total_amount + 1000}
+    //         new_data[12] = {...new_data[12],total_amount:new_data[12].total_amount + 100}
 
 
-            this.setState({data:new_data})
+    //         new_data[27] = {...new_data[27],total_amount:new_data[27].total_amount + 200}
 
-          },1000)
-      }
+
+    //         new_data[19] = {...new_data[19],total_amount:new_data[19].total_amount + 300}
+
+    //         new_data[2] = {...new_data[2],total_amount:new_data[2].total_amount + 1000}
+
+
+    //         this.setState({data:new_data})
+
+    //       },1000)
+    //   }
       hideHandler=()=>{
         document.querySelector('.pvtCols').style.display="none"
         document.querySelector('.pvtRows').style.display="none"
@@ -239,6 +270,22 @@ class App extends Component {
 
                 <div className="buttons">
 
+                    {/* <button onClick={()=>{
+
+                        let x = ["ahmed","sharawy"]
+                        let y = []
+                        for(let i = 0;i<4;i++)
+                        {
+                            y.push(...x)
+                        }
+
+                        console.log("y",y)
+                    }}>
+                        Change csdafsadfs
+                    </button> */}
+                    <button onClick={this.changeLanguage}>
+                        Change Language
+                    </button>
                     
                     <button onClick={this.exportdata}>
                         Export to Excel
@@ -384,8 +431,11 @@ class App extends Component {
                     // vals={this.state.aggregatorFilters} // aggregator filter attribute
                     rendererName =  {this.state.rendererName}      
                     hiddenAttributes = {[...this.state.rows,...this.state.cols]}
+
                     {...this.state}
                     /> 
+
+            
             </div>
         );
     }
