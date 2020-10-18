@@ -15,7 +15,7 @@ const PlotlyRenderers = createPlotlyRenderers(Plot);
 class App extends Component {
    
 
-    state = {data:en_list,rows:[],cols:[],rendererName:"Table",aggregatorName:"Count",vals:[],filter1:"",filter2:""}
+    state = {data:en_list,rows:[],cols:[],rendererName:"Table",aggregatorName:"mySum",vals:[],filter1:"",filter2:""}
     excludeArr = ["Count","Count as fraction of Total"]
     data = (callback)  => {
         
@@ -27,6 +27,7 @@ class App extends Component {
 
         // this.setState({data:englishData})
     }
+ _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
      
     btnHandler = ()=>{
                                     
@@ -40,7 +41,7 @@ class App extends Component {
         if(this.state.aggregatorName !== "Sum over Sum")
         {
             
-            this.setState({vals:[value],filter1:value})
+            this.setState({vals:[value,"Average"],filter1:value})
         }
 
         else
@@ -99,7 +100,9 @@ class App extends Component {
             return r;
           });
           if (colKeys.length === 1 && colKeys[0].length === 0) {
-            headerRow.push(this.state.aggregatorName);
+            // headerRow.push(this.state.aggregatorName);
+
+            headerRow.push("Totals");
           } else {
             colKeys.map(function (c) {
               return headerRow.push(c.join('-'));
@@ -118,6 +121,9 @@ class App extends Component {
             });
             return row;
           });
+
+
+        //   result.push({"dsdsds":5454})
 
           
 
@@ -152,9 +158,39 @@ class App extends Component {
 
             new_data[0] = {...new_data[0],total_amount:new_data[0].total_amount + 100}
 
+            new_data[5] = {...new_data[5],total_amount:new_data[5].total_amount + 150}
+
+
+            new_data[10] = {...new_data[10],total_amount:new_data[10].total_amount + 100}
+
+
+            new_data[11] = {...new_data[11],total_amount:new_data[11].total_amount + 200}
+
+
+            new_data[13] = {...new_data[13],total_amount:new_data[13].total_amount + 300}
+
+            new_data[20] = {...new_data[20],total_amount:new_data[20].total_amount + 1000}
+
+
+            new_data[7] = {...new_data[7],total_amount:new_data[7].total_amount + 100}
+
+            new_data[9] = {...new_data[9],total_amount:new_data[9].total_amount + 150}
+
+
+            new_data[12] = {...new_data[12],total_amount:new_data[12].total_amount + 100}
+
+
+            new_data[27] = {...new_data[27],total_amount:new_data[27].total_amount + 200}
+
+
+            new_data[19] = {...new_data[19],total_amount:new_data[19].total_amount + 300}
+
+            new_data[2] = {...new_data[2],total_amount:new_data[2].total_amount + 1000}
+
+
             this.setState({data:new_data})
 
-          },2000)
+          },1000)
       }
       hideHandler=()=>{
         document.querySelector('.pvtCols').style.display="none"
@@ -169,13 +205,37 @@ class App extends Component {
 
         // console.log("Filter 1",typeof this.state.filter1)
         var count = (data, rowKey, colKey) => {
+        //  var formatter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : usFmtInt;
+
             return {
               count: 0,
               push: function(record) { this.count +=record.x + record.y; },
               value: function() { return this.count; },
-              format: function(x) { return x; },
+              format:function(x) { return x; },
            };
           };
+         var sum = function(attributeArray) {
+            // var formatter = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : usFmt;
+            var attr = attributeArray[0];
+            
+              return function () {
+                return {
+                  sum: 0,
+                  push: function push(record) {
+                    if (!isNaN(parseFloat(record[attr]))) {
+                      this.sum += parseFloat(record[attr]);
+                    }
+                  },
+                  value: function value() {
+                    return this.sum;
+                  },
+        
+                  format: function(x) { return x; },
+                  numInputs: typeof attr !== 'undefined' ? 0 : 1
+                
+              };
+            };
+          }
 
         return (
 
@@ -186,7 +246,7 @@ class App extends Component {
 
                     
                     <button onClick={this.exportdata}>
-                        export
+                        Export to Excel
                     </button>
                     <button onClick={()=>{
                         
@@ -220,7 +280,7 @@ class App extends Component {
                         });
                         this.setState({data:en_list})
                     }}>
-                        Filter
+                        Highlighter
                     </button>
 
                     <select onChange={(e)=>this.setState({rendererName:e.target.value})}>
@@ -297,7 +357,7 @@ class App extends Component {
                         })
                     }
                     </select>}
-<button onClick={()=>this. hideHandler()}>Table</button>
+                <button onClick={()=>this. hideHandler()}>Hide Attributes</button>
                     
                  </div>
                 <PivotTableUI
@@ -310,15 +370,15 @@ class App extends Component {
                     renderers={Object.assign({}, TableRenderers, PlotlyRenderers)}
                     rows = {this.state.rows}
                     cols={this.state.cols}
-                    // // aggregators={{cc: function(x) { return count}, dd: function(x) { return count}}}
-
-                    // aggregators={{cc: function(x) { return count}}}
+                    // aggregators={{sum: function(x) { return count}, dd: function(x) { return count}}}
+                    // valueFilter={"Count","Sum"}
+                    aggregators={{mySum : function(x) { return sum}}}
                     aggregatorName={this.state.aggregatorName}
-                    // vals={this.state.aggregatorFilters} // aggregator filter attribute
+                    // aggregatorName={"sum"}
+
+                    vals={this.state.aggregatorFilters} // aggregator filter attribute
                     rendererName =  {this.state.rendererName}      
-                    allowExcelExport={true}
-                    ref={d => this.pivotObj = d}
-                    hiddenAttributes={[...this.state.rows,...this.state.cols]}
+                    hiddenAttributes = {[...this.state.rows,...this.state.cols]}
                     {...this.state}
                     /> 
             </div>
