@@ -61,7 +61,33 @@ class App extends Component {
       return callback(item)
     })
     }
+
+
+    reformatData = () => {
+
+
+
+        this.state.dataa.map(item=>{
+            let temp = []
+            let new_obj = {}
+            let flag = false
+            Object.keys(item).map(key=>{
+            
+                if(this.measures.includes(key) && flag == false)
+                {
+                    if(this.chosen_measures.includes(key))
+                    {
+                        new_obj = {...new_obj,[key]:item[key]}
+                    }
+                }
+              new_obj = {...new_obj,[Config[key][this.state.lang]]:key}
+            })
+
+        })
+    }
      
+
+   
     btnHandler = ()=>{
                                     
         this.setState({rows:[...this.state.rows,"merchant_code","billername","gov_code"],cols:[...this.state.cols,"created_at","sectorname","total_amount"]})
@@ -286,6 +312,22 @@ class App extends Component {
 
                 <div className="buttons">
 
+                    {/* <button onClick={()=>{
+
+                        let x = ["ahmed","sharawy"]
+                        let y = []
+                        for(let i = 0;i<4;i++)
+                        {
+                            y.push(...x)
+                        }
+
+                        console.log("y",y)
+                    }}>
+                        Change csdafsadfs
+                    </button> */}
+                    <button onClick={this.changeLanguage}>
+                        Change Language
+                    </button>
                     
                     <button onClick={this.exportdata}>
                         Export to Excel
@@ -433,8 +475,11 @@ class App extends Component {
                     vals={this.state.aggregatorFilters} // aggregator filter attribute
                     rendererName =  {this.state.rendererName}      
                     hiddenAttributes = {[...this.state.rows,...this.state.cols]}
+
                     {...this.state}
                     /> 
+
+            
             </div>
         );
     }

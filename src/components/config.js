@@ -53,7 +53,47 @@
         "En_name":"items count",
         "Ar_name":"العدد",
 		"Type":"D"
-    }
+    },
+
+    "number_of_transactions":{
+      "En_name":"number_of_transactions",
+      "Ar_name":"عدد العمليات",
+  "Type":"M"
+  },
+
+  "total_revenue":{
+    "En_name":"total_revenue",
+    "Ar_name":"اجمالى الارباح",
+"Type":"M"
+},
+
+"service_id":{
+  "En_name":"service_id",
+  "Ar_name":"رقم الخدمة",
+"Type":"D"
+},
+
+
+"transaction_date":{
+
+  "En_name":"transaction_date",
+  "Ar_name":"تاريخ العملية",
+"Type":"D"
+},
+
+"main_biller_id":{
+
+  
+  "En_name":"main_biller_id",
+  "Ar_name":"رقم مزود الخدمة الرئيسي",
+"Type":"D"
+},
+"sector_id":{
+  "En_name":"sector_id",
+  "Ar_name":"رقم القطاع",
+"Type":"D"
+}
+
 }   
 
 export default config
