@@ -6,28 +6,61 @@ import createPlotlyComponent from 'react-plotly.js/factory';
 import createPlotlyRenderers from 'react-pivottable/PlotlyRenderers';
 import Plotly from 'plotly.js-dist';
 import {en_list,en2} from './data'
+import Config from './config';
 import './style.css';
 import { PivotData } from 'react-pivottable/Utilities';
+import "@gooddata/sdk-ui-pivot/styles/css/main.css";
+import { PivotTable } from "@gooddata/sdk-ui-pivot";
 const Plot = createPlotlyComponent(Plotly);
 
 const PlotlyRenderers = createPlotlyRenderers(Plot);
 
 class App extends Component {
    
-
-    state = {data:en_list,rows:[],cols:[],rendererName:"Table",aggregatorName:"mySum",vals:[],filter1:"",filter2:""}
+     
+    state = {afterFormat:[],dataa:en_list,newFormat:[],rows:[],cols:[],rendererName:"Table",aggregatorName:"sum_square",vals:[],filter1:"",filter2:"",obj:[{amount:50,revenue:2,value:2000},{average:20,amount:15,value:3000}]}
+    list=["total_amount","total_revenue","number_of_transactions"]
     excludeArr = ["Count","Count as fraction of Total"]
+  
+
     data = (callback)  => {
-        
-         this.state.data.map(item=>{
-
-            return callback(item)
-        })   
-      
-
-        // this.setState({data:englishData})
+      this.state.dataa.map(item=>{
+        let newData={}
+        Object.keys(item).map(key=>{
+          // debugger
+          
+        if(this.list.includes(key)) {
+          console.log("okkk")
+          const val={value:item[key]}
+          delete item[key]
+           newData={...item,measures: key,...val
+          }
+          
+        }
+        console.log(newData)
+        // let newObj={}
+        //   Object.keys(newData).map(key=>{
+        //     // debugger
+            
+        //   if(this.list.includes(key)) {
+          
+        //     delete newData[key]
+        //      newObj={...newData}
+              
+        //     }})
+          // console.log(newObj)
+       this.state.afterFormat.push(newData)
+       console.log(newData)
+       console.log(this.state.afterFormat)
+  
+        // console.log(this.state.dataa[0])
+  
+      })
+      })
+    this.state.afterFormat.map(item=>{
+      return callback(item)
+    })
     }
- _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
      
     btnHandler = ()=>{
                                     
@@ -82,7 +115,7 @@ class App extends Component {
     }
 
      exportdata = () => {
-        if(this.state.data.length > 0){
+        if(this.state.dataa.length > 0){
           var pivotData = new PivotData(this.state);
           
           var rowKeys = pivotData.getRowKeys();
@@ -150,68 +183,78 @@ class App extends Component {
 
       componentDidMount()
       {
-          setInterval(()=>{
+          // setInterval(()=>{
 
             
 
-            let new_data = [...this.state.data]
+          //   let new_data = [...this.state.obj]
 
-            new_data[0] = {...new_data[0],total_amount:new_data[0].total_amount + 100}
+          //   new_data[0] = {...new_data[0],total_amount:new_data[0].total_amount + 100}
 
-            new_data[5] = {...new_data[5],total_amount:new_data[5].total_amount + 150}
-
-
-            new_data[10] = {...new_data[10],total_amount:new_data[10].total_amount + 100}
+            // new_data[5] = {...new_data[5],total_amount:new_data[5].total_amount + 150}
 
 
-            new_data[11] = {...new_data[11],total_amount:new_data[11].total_amount + 200}
+            // new_data[10] = {...new_data[10],total_amount:new_data[10].total_amount + 100}
 
 
-            new_data[13] = {...new_data[13],total_amount:new_data[13].total_amount + 300}
-
-            new_data[20] = {...new_data[20],total_amount:new_data[20].total_amount + 1000}
+            // new_data[11] = {...new_data[11],total_amount:new_data[11].total_amount + 200}
 
 
-            new_data[7] = {...new_data[7],total_amount:new_data[7].total_amount + 100}
+            // new_data[13] = {...new_data[13],total_amount:new_data[13].total_amount + 300}
 
-            new_data[9] = {...new_data[9],total_amount:new_data[9].total_amount + 150}
-
-
-            new_data[12] = {...new_data[12],total_amount:new_data[12].total_amount + 100}
+            // new_data[20] = {...new_data[20],total_amount:new_data[20].total_amount + 1000}
 
 
-            new_data[27] = {...new_data[27],total_amount:new_data[27].total_amount + 200}
+            // new_data[7] = {...new_data[7],total_amount:new_data[7].total_amount + 100}
+
+            // new_data[9] = {...new_data[9],total_amount:new_data[9].total_amount + 150}
 
 
-            new_data[19] = {...new_data[19],total_amount:new_data[19].total_amount + 300}
-
-            new_data[2] = {...new_data[2],total_amount:new_data[2].total_amount + 1000}
+            // new_data[12] = {...new_data[12],total_amount:new_data[12].total_amount + 100}
 
 
-            this.setState({data:new_data})
+            // new_data[27] = {...new_data[27],total_amount:new_data[27].total_amount + 200}
 
-          },1000)
+
+            // new_data[19] = {...new_data[19],total_amount:new_data[19].total_amount + 300}
+
+            // new_data[2] = {...new_data[2],total_amount:new_data[2].total_amount + 1000}
+
+
+      //       this.setState({data:new_data})
+
+      //     },1000)
+      
       }
       hideHandler=()=>{
         document.querySelector('.pvtCols').style.display="none"
         document.querySelector('.pvtRows').style.display="none"
 
         document.querySelector('.pvtVertList').style.display="none"
-
-
+      
     }
     render() {
 
 
         // console.log("Filter 1",typeof this.state.filter1)
-        var count = (data, rowKey, colKey) => {
-        //  var formatter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : usFmtInt;
+        // var count = (data, rowKey, colKey) => {
+        //     return {
+        //       sum:0,
+        //       count: 0,
+        //       push: function(record) { this.sum+= parseFloat(record.damen_fee);this.count++},
+        //       value: function() { return 0; },
+        //       format: function(x) { return  this.sum + " / " + this.count; },
+        //    };
+        //   };
 
-            return {
-              count: 0,
-              push: function(record) { this.count +=record.x + record.y; },
-              value: function() { return this.count; },
-              format:function(x) { return x; },
+          var sum_square = (data, rowKey, colKey) => {
+              let filter1= this.state.filter1
+              return {
+                  
+              sum:0,
+              push: function(record) { this.sum+= parseFloat(record[filter1])},
+              value: function() { return 0; },
+              format: function(x) { return  Math.sqrt(this.sum) },
            };
           };
          var sum = function(attributeArray) {
@@ -237,9 +280,8 @@ class App extends Component {
             };
           }
 
+
         return (
-
-
             <div>
 
                 <div className="buttons">
@@ -250,15 +292,15 @@ class App extends Component {
                     </button>
                     <button onClick={()=>{
                         
-                        if(this.state.data.length > 2000)
+                        if(this.state.dataa.length > 2000)
                         {
 
-                            this.setState({data:en2})
+                            this.setState({dataa:en2})
                         }
 
                         else
                         {
-                            this.setState({data:en2})
+                            this.setState({dataa:en2})
                         }
                         
                     }}>Change Data</button>
@@ -303,7 +345,7 @@ class App extends Component {
                     </select>
 
 
-                    <select onChange={(e)=>this.setState({aggregatorName:e.target.value,vals:[]})}>
+                    <select onChange={(e)=>this.setState({aggregatorName:e.target.value,vals:[]})} value={this.state.aggregatorName}>
                         <option>Count</option>
 
                         <option>Count Unique Values</option>
@@ -330,6 +372,7 @@ class App extends Component {
                         <option>Sum as Fraction of Rows</option>
 
                         <option>Sum as Fraction of Columns</option>
+                        <option>sum_square</option>
                     </select>
 
                     {this.excludeArr.indexOf(this.state.aggregatorName) == -1 &&
@@ -338,7 +381,7 @@ class App extends Component {
                     value={this.state.filter1}>
                         <option style={{display:"none"}}></option>
                         {
-                            Object.keys(this.state.data[0]).map(key=>{
+                            Object.keys(this.state.dataa[0]).map(key=>{
 
                                 return <option>{key}</option>
                             })
@@ -351,7 +394,7 @@ class App extends Component {
                     value={this.state.filter1}>
                     <option style={{display:"none"}}></option>
                     {
-                        Object.keys(this.state.data[0]).map(key=>{
+                        Object.keys(this.state.dataa[0]).map(key=>{
 
                             return <option>{key}</option>
                         })
@@ -363,16 +406,27 @@ class App extends Component {
                 <PivotTableUI
                     data={this.data}
                     onChange={s => {
-
-                        console.log("table data",s)
+                        // console.log("table data",s)
+                        if(s.rows.includes("damen_fee"))
+                        {
+                            let data = s.rows
+                            let index = data.indexOf("damen_fee")
+                            console.log(index)
+                            data.splice(index,1)
+                            console.log(data)
+                            // this.setState({rows:data})
+                            this.setState(s)
+                            return
+                        }
                         this.setState(s)
                     }}
                     renderers={Object.assign({}, TableRenderers, PlotlyRenderers)}
                     rows = {this.state.rows}
                     cols={this.state.cols}
-                    // aggregators={{sum: function(x) { return count}, dd: function(x) { return count}}}
-                    // valueFilter={"Count","Sum"}
-                    aggregators={{mySum : function(x) { return sum}}}
+                    // measures={"amount","average"}
+                    //  aggregators={{cc: function(x) { return count}, dd: function(x) { return count}}}
+
+                    aggregators={{sum_square: function(x) { return sum_square}}}
                     aggregatorName={this.state.aggregatorName}
                     // aggregatorName={"sum"}
 
