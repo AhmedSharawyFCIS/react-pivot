@@ -92,6 +92,19 @@
   "En_name":"sector_id",
   "Ar_name":"رقم القطاع",
 "Type":"D"
+},
+
+
+"measures":{
+  "En_name":"measures",
+  "Ar_name":"القياس",
+"Type":"D"
+},
+
+"value":{
+  "En_name":"value",
+  "Ar_name":"القيمة",
+"Type":"D"
 }
 
 }   
