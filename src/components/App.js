@@ -18,7 +18,7 @@ const PlotlyRenderers = createPlotlyRenderers(Plot);
 class App extends Component {
    
      
-    state = {afterFormat:[],dataa:en_list,newFormat:[],rows:[],cols:[],rendererName:"Table",aggregatorName:"sum_square",vals:[],filter1:"",filter2:"",obj:[{amount:50,revenue:2,value:2000},{average:20,amount:15,value:3000}]}
+    state = {afterFormat:[],afterFormat2:[],dataa:en_list,newFormat:[],rows:[],cols:[],rendererName:"Table",aggregatorName:"sum_square",vals:[],filter1:"",filter2:"",obj:[{amount:50,revenue:2,value:2000},{average:20,amount:15,value:3000}]}
     list=["total_amount","total_revenue","number_of_transactions"]
     excludeArr = ["Count","Count as fraction of Total"]
   
@@ -53,11 +53,7 @@ class App extends Component {
             console.log(newData)
             console.log(this.state.afterFormat)
         }
-        // if(newData!=={} && newObj!=={}){
-
-        // }
-  
-        // console.log(this.state.dataa[0])
+       
   
       })
       })
@@ -213,6 +209,8 @@ class App extends Component {
 
       componentDidMount()
       {
+      console.log(this.data2)
+
           // setInterval(()=>{
 
             
