@@ -25,33 +25,37 @@ class App extends Component {
 
     data = (callback)  => {
       this.state.dataa.map(item=>{
-        let newData={}
+        // let newData={}
+        var newObj={}
         Object.keys(item).map(key=>{
-          // debugger
+          debugger
           
         if(this.list.includes(key)) {
           console.log("okkk")
           const val={value:item[key]}
           delete item[key]
-           newData={...item,measures: key,...val
+          var  newData={...item,measures: key,...val
           }
           
-        }
-        console.log(newData)
-        // let newObj={}
-        //   Object.keys(newData).map(key=>{
-        //     // debugger
-            
-        //   if(this.list.includes(key)) {
-          
-        //     delete newData[key]
-        //      newObj={...newData}
+          console.log(newData)
+            Object.keys(newData).map(key=>{
+              debugger
               
-        //     }})
-          // console.log(newObj)
-       this.state.afterFormat.push(newData)
-       console.log(newData)
-       console.log(this.state.afterFormat)
+            if(this.list.includes(key)) {
+            
+              delete newData[key]
+              
+            }
+            newObj={...newData}
+            })
+            console.log(newObj)
+            this.state.afterFormat.push(newObj)
+            console.log(newData)
+            console.log(this.state.afterFormat)
+        }
+        // if(newData!=={} && newObj!=={}){
+
+        // }
   
         // console.log(this.state.dataa[0])
   
