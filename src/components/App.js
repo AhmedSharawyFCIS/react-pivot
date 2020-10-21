@@ -9,8 +9,8 @@ import {en_list,en2} from './data'
 import Config from './config';
 import './style.css';
 import { PivotData } from 'react-pivottable/Utilities';
-import "@gooddata/sdk-ui-pivot/styles/css/main.css";
-import { PivotTable } from "@gooddata/sdk-ui-pivot";
+// import "@gooddata/sdk-ui-pivot/styles/css/main.css";
+// import { PivotTable } from "@gooddata/sdk-ui-pivot";
 const Plot = createPlotlyComponent(Plotly);
 
 const PlotlyRenderers = createPlotlyRenderers(Plot);
@@ -18,7 +18,7 @@ const PlotlyRenderers = createPlotlyRenderers(Plot);
 class App extends Component {
    
      
-    state = {afterFormat:[],afterFormat2:[],dataa:en_list,newFormat:[],rows:[],cols:[],rendererName:"Table",aggregatorName:"sum_square",vals:[],filter1:"",filter2:"",obj:[{amount:50,revenue:2,value:2000},{average:20,amount:15,value:3000}]}
+    state = {listMeasures:[],afterFormat:[],dataa:en_list,newFormat:[],rows:[],cols:[],rendererName:"Table",aggregatorName:"sum_square",vals:[],filter1:"value",filter2:"",lang:"En_name"}
     list=["total_amount","total_revenue","number_of_transactions"]
     excludeArr = ["Count","Count as fraction of Total"]
   
@@ -28,30 +28,51 @@ class App extends Component {
         // let newData={}
         var newObj={}
         Object.keys(item).map(key=>{
-          debugger
+          // debugger
           
         if(this.list.includes(key)) {
-          console.log("okkk")
+
           const val={value:item[key]}
           delete item[key]
-          var  newData={...item,measures: key,...val
-          }
+          var  newData={...item,measures: key,...val}
           
-          console.log(newData)
+          let localize_obj = {}
             Object.keys(newData).map(key=>{
-              debugger
+              // debugger
               
             if(this.list.includes(key)) {
             
               delete newData[key]
               
             }
-            newObj={...newData}
+
+            else
+            {
+
+                if(key == "measures")
+                {
+                  localize_obj = {...localize_obj,[Config[key][this.state.lang]]:Config[newData[key]][this.state.lang]}
+                }
+
+                else
+                {
+
+                  localize_obj = {...localize_obj,[Config[key][this.state.lang]]:newData[key]}
+                }
+              
+                
+              
+              
+            }
+
+
+              
+            
+              // newObj={...newData}
+
+
             })
-            console.log(newObj)
-            this.state.afterFormat.push(newObj)
-            console.log(newData)
-            console.log(this.state.afterFormat)
+            this.state.afterFormat.push(localize_obj)
         }
        
   
@@ -139,7 +160,9 @@ class App extends Component {
             
         }
     }
+    newMeasure=()=>{
 
+    }
      exportdata = () => {
         if(this.state.dataa.length > 0){
           var pivotData = new PivotData(this.state);
@@ -205,11 +228,27 @@ class App extends Component {
           alert("No Selections Made")
         }
       }
+componentDidUpdate(){
 
+  const attributes = document.querySelectorAll('.pvtColLabel')
+  // attributes[0].addEventListener("click",function(){
+    console.log(attributes)
+  // })
+  attributes.forEach((cur,i)=>{
+    console.log(cur.innerHTML)
+  
+    cur.addEventListener("click",function(e){
+      console.log("drilled")
+      // console.log(e.target.value)
+    })
+    cur.click()
+  })
+}
 
       componentDidMount()
       {
-      console.log(this.data2)
+        //////////////////////////// drilled down///////////////
+      // console.log(this.data2)
 
           // setInterval(()=>{
 
@@ -277,12 +316,14 @@ class App extends Component {
 
           var sum_square = (data, rowKey, colKey) => {
               let filter1= this.state.filter1
+
+              
               return {
                   
               sum:0,
-              push: function(record) { this.sum+= parseFloat(record[filter1])},
+              push: function(record) { this.sum =record[filter1];},
               value: function() { return 0; },
-              format: function(x) { return  Math.sqrt(this.sum) },
+              format: function(x) { return this.sum },
            };
           };
          var sum = function(attributeArray) {
@@ -445,7 +486,7 @@ class App extends Component {
                     }
                     </select>}
                 <button onClick={()=>this. hideHandler()}>Hide Attributes</button>
-                    
+
                  </div>
                 <PivotTableUI
                     data={this.data}
