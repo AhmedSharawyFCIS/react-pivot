@@ -17,8 +17,10 @@ const PlotlyRenderers = createPlotlyRenderers(Plot);
 
 class App extends Component {
    
+
+   
      
-    state = {afterFormat:[],dataa:en_list,newFormat:[],rows:[],cols:[],rendererName:"Table",aggregatorName:"sum_square",vals:[],filter1:"القيمة",filter2:"",obj:[{amount:50,revenue:2,value:2000},{average:20,amount:15,value:3000}],lang:"Ar_name"}
+    state = {filters:[],filterKey:"",filterValue:"",measures:[],measureKey:"",measureValue:"",afterFormat:[],dataa:en_list,newFormat:[],rows:[],cols:[],rendererName:"Table",aggregatorName:"sum_square",vals:[],filter1:"القيمة",filter2:"",lang:"Ar_name"}
     list=["total_amount","total_revenue","number_of_transactions"]
     excludeArr = ["Count","Count as fraction of Total"]
   
@@ -333,7 +335,9 @@ class App extends Component {
             };
           }
 
-
+          console.log("filter key",this.state.filterKey)
+          console.log("filter value",this.state.filterValue)
+        console.log("filters",this.state.filters)
         return (
             <div>
 
@@ -472,10 +476,39 @@ class App extends Component {
                 <button onClick={()=>this. hideHandler()}>Hide Attributes</button>
                     
                  </div>
+
+                 <div>
+                   <label>Filters : </label>
+                   <input type="text" onChange={(e)=>this.setState({filterKey:e.target.value})} />
+                   
+                   <input type="text" onChange={(e)=>this.setState({filterValue:e.target.value})} />
+
+                   <button onClick={()=>{
+
+                    let obj = {[this.state.filterKey]:this.state.filterValue}
+                    this.setState({filters:[...this.state.filters,obj]})
+                    //  this.setState({filters:[...this.state.filters,[this.state.filterKey]:this.state.filterValue}])
+                   }}>Add</button>
+
+                   <br/>
+
+                   <label>Measures : </label>
+                   <input type="text" onChange={(e)=>this.setState({measureKey:e.target.value})} />
+                   
+                   <input type="text" onChange={(e)=>this.setState({measureValue:e.target.value})} />
+
+                   <button onClick={()=>{
+
+                    let obj = {[this.state.measureKey]:this.state.measureValue}
+                    this.setState({measures:[...this.state.measures,obj]})
+                    //  this.setState({filters:[...this.state.filters,[this.state.filterKey]:this.state.filterValue}])
+                   }}>Add</button>
+
+                 </div>
                 <PivotTableUI
                     data={this.data}
                     onChange={s => {
-                        // console.log("table data",s)
+                        console.log("table data",s)
                         if(s.rows.includes("damen_fee"))
                         {
                             let data = s.rows
