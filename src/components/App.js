@@ -1,4 +1,4 @@
-import React , {Component, useCallback} from 'react';
+import React , {Component, createElement, useCallback} from 'react';
 import PivotTableUI from 'react-pivottable/PivotTableUI';
 import 'react-pivottable/pivottable.css';
 import TableRenderers from 'react-pivottable/TableRenderers';
@@ -17,8 +17,10 @@ const PlotlyRenderers = createPlotlyRenderers(Plot);
 
 class App extends Component {
    
+
+   
      
-    state = {listMeasures:[],afterFormat:[],dataa:en_list,newFormat:[],rows:[],cols:[],rendererName:"Table",aggregatorName:"sum_square",vals:[],filter1:"value",filter2:"",lang:"En_name"}
+    state = {filters:[],filterKey:"",filterValue:"",measures:[],measureKey:"",measureValue:"",afterFormat:[],dataa:en_list,newFormat:[],rows:[],cols:[],rendererName:"Table",aggregatorName:"sum_square",vals:[],filter1:"القيمة",filter2:"",lang:"Ar_name"}
     list=["total_amount","total_revenue","number_of_transactions"]
     excludeArr = ["Count","Count as fraction of Total"]
   
@@ -235,13 +237,16 @@ componentDidUpdate(){
     console.log(attributes)
   // })
   attributes.forEach((cur,i)=>{
-    console.log(cur.innerHTML)
-  
+  //   console.log(cur.innerHTML)
+  //   const div =document.createElement("div")
+  //   const arrow=document.createElement("span")
+  //   arrow.className = cur.innerHTML; 
+  // cur.innerHTML=
     cur.addEventListener("click",function(e){
       console.log("drilled")
       // console.log(e.target.value)
     })
-    cur.click()
+    // cur.click()
   })
 }
 
@@ -349,7 +354,9 @@ componentDidUpdate(){
             };
           }
 
-
+          console.log("filter key",this.state.filterKey)
+          console.log("filter value",this.state.filterValue)
+        console.log("filters",this.state.filters)
         return (
             <div>
 
@@ -488,10 +495,39 @@ componentDidUpdate(){
                 <button onClick={()=>this. hideHandler()}>Hide Attributes</button>
 
                  </div>
+
+                 <div>
+                   <label>Filters : </label>
+                   <input type="text" onChange={(e)=>this.setState({filterKey:e.target.value})} />
+                   
+                   <input type="text" onChange={(e)=>this.setState({filterValue:e.target.value})} />
+
+                   <button onClick={()=>{
+
+                    let obj = {[this.state.filterKey]:this.state.filterValue}
+                    this.setState({filters:[...this.state.filters,obj]})
+                    //  this.setState({filters:[...this.state.filters,[this.state.filterKey]:this.state.filterValue}])
+                   }}>Add</button>
+
+                   <br/>
+
+                   <label>Measures : </label>
+                   <input type="text" onChange={(e)=>this.setState({measureKey:e.target.value})} />
+                   
+                   <input type="text" onChange={(e)=>this.setState({measureValue:e.target.value})} />
+
+                   <button onClick={()=>{
+
+                    let obj = {[this.state.measureKey]:this.state.measureValue}
+                    this.setState({measures:[...this.state.measures,obj]})
+                    //  this.setState({filters:[...this.state.filters,[this.state.filterKey]:this.state.filterValue}])
+                   }}>Add</button>
+
+                 </div>
                 <PivotTableUI
                     data={this.data}
                     onChange={s => {
-                        // console.log("table data",s)
+                        console.log("table data",s)
                         if(s.rows.includes("damen_fee"))
                         {
                             let data = s.rows
