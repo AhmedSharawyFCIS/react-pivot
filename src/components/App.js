@@ -9,6 +9,7 @@ import {en_list,en2} from './data'
 import Config from './config';
 import './style.css';
 import { PivotData } from 'react-pivottable/Utilities';
+import axios from '../axios';
 // import "@gooddata/sdk-ui-pivot/styles/css/main.css";
 // import { PivotTable } from "@gooddata/sdk-ui-pivot";
 const Plot = createPlotlyComponent(Plotly);
@@ -20,7 +21,36 @@ class App extends Component {
 
    
      
-    state = {filters:[],filterKey:"",filterValue:"",measures:[],measureKey:"",measureValue:"",afterFormat:[],dataa:en_list,newFormat:[],rows:[],cols:[],rendererName:"Table",aggregatorName:"sum_square",vals:[],filter1:"القيمة",filter2:"",lang:"Ar_name"}
+    state = {
+      filters:[],
+      filterKey:"",
+      filterValue:"",
+      measures:[],
+      measureKey:"",
+      measureValue:"",
+      afterFormat:[],
+      dataa:[],
+      filterList:[],
+      measureList:[],
+      newFormat:[],
+      functionList:[],
+      functionIndex:-1,
+      rows:[],
+      cols:[],
+      rendererName:"Table",
+      aggregatorName:"sum_square",
+      vals:[],
+      filter1:"value",
+      filter2:"",
+      lang:"En_name",
+
+      filterListValue:[],
+      filterListValueIndex:-1,
+      filterIndex:-1,
+
+      measureIndex:-1
+      
+    }
     list=["total_amount","total_revenue","number_of_transactions"]
     excludeArr = ["Count","Count as fraction of Total"]
   
@@ -80,6 +110,8 @@ class App extends Component {
   
       })
       })
+
+    this.setState({dataa:this.state.afterFormat})
     this.state.afterFormat.map(item=>{
       return callback(item)
     })
@@ -165,7 +197,7 @@ class App extends Component {
     newMeasure=()=>{
 
     }
-     exportdata = () => {
+        exportdata = () => {
         if(this.state.dataa.length > 0){
           var pivotData = new PivotData(this.state);
           
@@ -201,6 +233,7 @@ class App extends Component {
             });
             colKeys.map(function (c) {
               var v = pivotData.getAggregator(r, c).value();
+              console.log("vv",v)
               row.push(v ? v : '');
             });
             return row;
@@ -232,6 +265,7 @@ class App extends Component {
       }
 componentDidUpdate(){
 
+  document.querySelector('.pvtTable').style.display="none"
   const attributes = document.querySelectorAll('.pvtColLabel')
   // attributes[0].addEventListener("click",function(){
     console.log(attributes)
@@ -252,6 +286,69 @@ componentDidUpdate(){
 
       componentDidMount()
       {
+
+
+        axios.get('GetPivotKeysConfig').then(response=>{
+
+          console.log("response",response.data)
+
+          let data = response.data
+
+          let tempData = []
+          let tempFilters = []
+          let tempMeasures = []
+          let tempFunctions = []
+          data.map(item=>{
+
+            if(item.TYPE == "D")
+            {
+              if(this.state.lang == "En_name")
+              {
+                tempData.push({[item.EN_NAME]:item.KEY})
+                // tempFilters.push({[item.EN_NAME]:item.KEY})
+                console.log("fff",item)
+                tempFilters.push({"key":item.KEY,"value":item.EN_NAME,"list":item.data})
+              }
+              else
+              {
+                tempData.push({[item.AR_NAME]:item.key})
+                tempFilters.push({"key":item.KEY,"value":item.AR_NAME,"list":item.data})
+              }
+            }
+
+            else if(item.TYPE == "M")
+            {
+              if(this.state.lang == "En_name")
+              {
+                tempData.push({[item.EN_NAME]:item.KEY})
+                tempMeasures.push({"key":item.KEY,"value":item.EN_NAME})
+                // tempMeasures.push({[item.EN_NAME]:item.KEY})
+              }
+              else
+              {
+                tempData.push({[item.AR_NAME]:item.KEY})
+              
+                tempMeasures.push({"key":item.KEY,"value":item.AR_NAME})
+              }
+            }
+
+            else if(item.TYPE == "F")
+            {
+             
+                tempFunctions.push(item)
+             
+            }
+          })
+
+         
+
+          this.setState({dataa:tempData,filterList:tempFilters,measureList:tempMeasures,functionList:tempFunctions})
+
+        }).catch(error=>{
+
+
+          console.log("error",error)
+        })
         //////////////////////////// drilled down///////////////
       // console.log(this.data2)
 
@@ -326,7 +423,7 @@ componentDidUpdate(){
               return {
                   
               sum:0,
-              push: function(record) { this.sum =record[filter1];},
+              push: function(record) { this.sum =record[filter1];console.log(record[filter1])},
               value: function() { return 0; },
               format: function(x) { return this.sum },
            };
@@ -354,9 +451,11 @@ componentDidUpdate(){
             };
           }
 
-          console.log("filter key",this.state.filterKey)
-          console.log("filter value",this.state.filterValue)
+          // console.log("filter key",this.state.filterKey)
+          // console.log("filter value",this.state.filterValue)
         console.log("filters",this.state.filters)
+
+        console.log("measures",this.state.measures)
         return (
             <div>
 
@@ -473,7 +572,7 @@ componentDidUpdate(){
                     value={this.state.filter1}>
                         <option style={{display:"none"}}></option>
                         {
-                            Object.keys(this.state.dataa[0]).map(key=>{
+                            Object.keys(this.state.dataa.length > 0?this.state.dataa[0]:[]).map(key=>{
 
                                 return <option>{key}</option>
                             })
@@ -486,7 +585,7 @@ componentDidUpdate(){
                     value={this.state.filter1}>
                     <option style={{display:"none"}}></option>
                     {
-                        Object.keys(this.state.dataa[0]).map(key=>{
+                        Object.keys(this.state.dataa.length > 0?this.state.dataa[0]:[]).map(key=>{
 
                             return <option>{key}</option>
                         })
@@ -498,34 +597,151 @@ componentDidUpdate(){
 
                  <div>
                    <label>Filters : </label>
-                   <input type="text" onChange={(e)=>this.setState({filterKey:e.target.value})} />
-                   
-                   <input type="text" onChange={(e)=>this.setState({filterValue:e.target.value})} />
+
+                   <select value={this.state.filterIndex !== -1 ?this.state.filterList[this.state.filterIndex-1].value:""} onChange={(e)=>{
+
+                      console.log("index",this.state.filterList[e.target.selectedIndex - 1])
+
+
+                     this.setState({filterIndex:e.target.selectedIndex,filterListValue:this.state.filterList[e.target.selectedIndex - 1].list})
+                    }
+                     }>
+                     <option style={{display:"none"}}></option>
+                     {
+                           this.state.filterList.map(item=>{
+
+                                return <option>{item.value}</option>
+                            })
+                        }
+
+                   </select>
+
+
+                   {this.state.filterIndex !== -1&&this.state.filterListValue !== undefined&&<select value={this.state.filterListValueIndex !== -1 ?this.state.filterListValue[this.state.filterListValueIndex-1].value:""} 
+                   onChange={(e)=>{
+
+                      this.setState({filterListValueIndex:e.target.selectedIndex})
+                      }
+                      }>
+                      <option style={{display:"none"}}></option>
+                      {
+                          this.state.filterListValue.map(item=>{
+                                if(this.state.lang == "En_name")
+                                {
+                                  return <option>{item.NAME}</option>
+                                }
+                                else
+                                {
+                                  return <option>{item.AR_NAME}</option>
+                                }
+                                
+                            })
+                        }
+
+                    </select>}
+     
+
 
                    <button onClick={()=>{
 
-                    let obj = {[this.state.filterKey]:this.state.filterValue}
-                    this.setState({filters:[...this.state.filters,obj]})
+                    //  console.log(this.state.filterList[this.state.filterIndex - 1])
+
+                    let obj = {[this.state.filterList[this.state.filterIndex - 1].key]:this.state.filterListValue[this.state.filterListValueIndex - 1].ID}
+
+                    let index = this.state.filters.findIndex(item=>item[this.state.filterList[this.state.filterIndex - 1].KEY] == this.state.filterList[this.state.filterIndex - 1].KEY)
+
+                    if(index != -1)
+                    {
+                      let old_obj = this.state.filters[index]
+                      let new_obj = {[this.state.filterList[this.state.filterIndex - 1].key]:old_obj[this.state.filterList[this.state.filterIndex - 1].key] + "," +  this.state.filterListValue[this.state.filterListValueIndex - 1].ID}
+
+                      this.state.filters[index] = new_obj
+
+                      this.setState({filters:this.state.filters})
+                    }
+
+                    else
+                    {
+                      this.setState({filters:[...this.state.filters,obj]})
+                    }
+                    
                     //  this.setState({filters:[...this.state.filters,[this.state.filterKey]:this.state.filterValue}])
                    }}>Add</button>
 
                    <br/>
 
                    <label>Measures : </label>
-                   <input type="text" onChange={(e)=>this.setState({measureKey:e.target.value})} />
+
+                   <select value={this.state.measureIndex !== -1 ?this.state.measureList[this.state.measureIndex-1].value:"" } 
+                    onChange={(e)=>this.setState({measureIndex:e.target.selectedIndex})}>
+                   <option style={{display:"none"}}></option>
+                     {
+                           this.state.measureList.map(item=>{
+                                console.log(item)
+                              
+                                  return <option>{item.value}</option>
+                              
+                            })
+                        }
+                   </select>
+                   {/* <input type="text" onChange={(e)=>this.setState({measureKey:e.target.value})} /> */}
+
+                   <select value={this.state.measureValue} onChange={(e)=>this.setState({measureValue:e.target.value})} >
+                   <option style={{display:"none"}}></option>
+                    <option>Count</option>
+                    <option>Sum</option>
+                  
+                   </select>
                    
-                   <input type="text" onChange={(e)=>this.setState({measureValue:e.target.value})} />
+                   {/* <input type="text" onChange={(e)=>this.setState({measureValue:e.target.value})} /> */}
 
                    <button onClick={()=>{
 
-                    let obj = {[this.state.measureKey]:this.state.measureValue}
+                    let obj = {[this.state.measureList[this.state.measureIndex-1].key]:this.state.measureValue}
                     this.setState({measures:[...this.state.measures,obj]})
                     //  this.setState({filters:[...this.state.filters,[this.state.filterKey]:this.state.filterValue}])
                    }}>Add</button>
 
+
+                    <br/>
+
+                  <label>Functions : </label>
+
+                  <select value={this.state.functionIndex !== -1 ?this.state.functionList[this.state.functionIndex-1].value:""}  
+                  onChange={(e)=>this.setState({functionIndex:e.target.selectedIndex})} >
+                  <option style={{display:"none"}}></option>
+                    {
+                          this.state.functionList.map(item=>{
+                              if(this.state.lang == "En_name")
+                              {
+                                return <option>{item.EN_NAME}</option>
+                              }
+
+                              else
+                              {
+
+                                return <option>{item.AR_NAME}</option>
+                              }
+                              
+                          })
+                      }
+                  </select>
+                  {/* <input type="text" onChange={(e)=>this.setState({measureKey:e.target.value})} /> */}
+
+                  
+
+                  {/* <input type="text" onChange={(e)=>this.setState({measureValue:e.target.value})} /> */}
+
+                  <button onClick={()=>{
+
+                  let obj = {"key":this.state.functionList[this.state.functionIndex-1].KEY}
+                  this.setState({measures:[...this.state.measures,obj]})
+                  //  this.setState({filters:[...this.state.filters,[this.state.filterKey]:this.state.filterValue}])
+                  }}>Add</button>
+
                  </div>
                 <PivotTableUI
-                    data={this.data}
+                    data={this.state.dataa}
                     onChange={s => {
                         console.log("table data",s)
                         if(s.rows.includes("damen_fee"))
