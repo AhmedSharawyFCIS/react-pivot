@@ -10,6 +10,7 @@ import Config from './config';
 import './style.css';
 import { PivotData } from 'react-pivottable/Utilities';
 import {GetPivotData,GetConfigurationData,GetPivotKeys}  from "../service";  
+import axios from '../axios';
 // import "@gooddata/sdk-ui-pivot/styles/css/main.css";
 // import { PivotTable } from "@gooddata/sdk-ui-pivot";
 const Plot = createPlotlyComponent(Plotly);
@@ -20,98 +21,167 @@ class App extends Component {
 
    
      
-    state = {dataReq:[],configData:[],pivotData:{
-      x_values:["gov_code"],
-      y_values:["created_at","date_year"],
-      measures:[{key:"total_amount",value:"sum"},{key:"total_amount",value:"count"},{key:"damen_n_min"}],
-      filters:[{date_day_range:{date_day_start:"21-07-2020",date_day_end:"24-07-2020"},gov_code:"31,1"}]
-  }
-  ,isClicked:false,filters:[],filterKey:"",filterValue:"",measures:[],measureKey:"",measureValue:"",afterFormat:[],dataa:en_list,newFormat:[],rows:[],cols:[],rendererName:"Table",aggregatorName:"sum_square",vals:[],filter1:"value",filter2:"",lang:"En_name"}
+    state = {
+      dataReq:[],configData:[],pivotData:{
+        x_values:["gov_code"],
+        y_values:["created_at","date_year"],
+        measures:[{key:"total_amount",value:"sum"},{key:"total_amount",value:"count"},{key:"damen_n_min"}],
+        filters:[{date_day_range:{date_day_start:"21-07-2020",date_day_end:"24-07-2020"},gov_code:"31,1"}]
+    }
+    ,isClicked:false,
+      filters:[],
+      filterKey:"",
+      filterValue:"",
+      measures:[],
+      measureKey:"",
+      measureValue:"",
+      afterFormat:[],
+      dataa:[],
+      filterList:[],
+      measureList:[],
+      newFormat:[],
+      functionList:[],
+      functionIndex:-1,
+      rows:[],
+      cols:[],
+      rendererName:"Table",
+      aggregatorName:"sum_square",
+      vals:[],
+      filter1:"value",
+      filter2:"",
+      lang:"En_name",
+
+      filterListValue:[],
+      filterListValueIndex:-1,
+      filterIndex:-1,
+
+      measureIndex:-1
+      
+    }
     list=["total_amount","total_revenue","number_of_transactions"]
     excludeArr = ["Count","Count as fraction of Total"]
   
      mapCases=["gov_code"]
-    pdata = async (callback)  => {
-      const data1 = await GetPivotData(this.state.pivotData);
-      // debugger
-      console.log("hhhhh",data1)
-      this.setState({dataReq:data1})
-      console.log(this.state.dataReq)
-      debugger
-      this.state.dataReq.map(item=>{
-        Object.keys(item).map(key=>{
-          const k =key.toLocaleLowerCase()
-          if(this.mapCases.includes(k)){
-          debugger
-           const rec =this.state.configData.find(el=>el.KEY==k)
-           const code =item[key]
-        const obj=   rec.data.find(el=>el.ID==code)
-        item[key]=obj.NAME
-          }
-        })
-      })
-      console.log(this.state.dataReq)
+     handleApply=async()=>{
+debugger;
 
-      // this.state.dataa.map(item=>{
-      // // debugger
-      //   // let newData={}
-      //   var newObj={}
-      //   Object.keys(item).map(key=>{
-      //     // debugger
-          
-      //   if(this.list.includes(key)) {
-
-      //     const val={value:item[key]}
-      //     delete item[key]
-      //     var  newData={...item,measures: key,...val}
-          
-      //     let localize_obj = {}
-      //       Object.keys(newData).map(key=>{
-      //         // debugger
-              
-      //       if(this.list.includes(key)) {
-            
-      //         delete newData[key]
-              
-      //       }
-
-      //       else
-      //       {
-
-      //           if(key == "measures")
-      //           {
-      //             localize_obj = {...localize_obj,[Config[key][this.state.lang]]:Config[newData[key]][this.state.lang]}
-      //           }
-
-      //           else
-      //           {
-
-      //             localize_obj = {...localize_obj,[Config[key][this.state.lang]]:newData[key]}
-      //           }
-              
-                
-              
-              
-      //       }
+let rows = []
+let cols = []
 
 
-              
-            
-      //         // newObj={...newData}
 
-
-      //       })
-      //       this.state.afterFormat.push(localize_obj)
-      //   }
+  this.state.dataa.map(item=>{
+    Object.keys(item).map(key=>{
        
-  
-      // })
-      // })
-      this.state.dataReq.map(item=>{
-      return callback(item)
-    })
-    }
+      if(this.state.rows.includes(key))
+      {
+        rows.push(item[key])
 
+      }
+  
+      if(this.state.cols.includes(key))
+      {
+        cols.push(item[key])
+      }
+
+    })
+    
+  })
+  this.setState({rows})
+  this.setState({cols})
+
+const pivotData ={
+x_values: rows,
+y_values:cols,
+measures:this.state.measures,
+filters:this.state.filters
+}
+console.log(pivotData)
+const data1 = await GetPivotData(pivotData);
+// debugger
+console.log("hhhhh",data1)
+this.setState({dataReq:data1})
+console.log(this.state.dataReq)
+    const   pdata =  (callback)  => {
+       debugger
+       this.state.dataReq.map(item=>{
+         Object.keys(item).map(key=>{
+           const k =key.toLocaleLowerCase()
+           if(this.mapCases.includes(k)){
+           debugger
+            const rec =this.state.configData.find(el=>el.KEY==k)
+            const code =item[key]
+            const obj=   rec.data.find(el=>el.ID==code)
+            item[key]=obj.NAME
+           }
+         })
+        })
+       console.log(this.state.dataReq)
+       document.querySelector('.pvtTable').style.display="block"
+       this.setState({dataa:this.state.dataReq})
+       console.log(this.state.dataa)
+       // this.state.dataa.map(item=>{
+         // // debugger
+         //   // let newData={}
+         //   var newObj={}
+         //   Object.keys(item).map(key=>{
+           //     // debugger
+           
+           //   if(this.list.includes(key)) {
+             
+             //     const val={value:item[key]}
+             //     delete item[key]
+             //     var  newData={...item,measures: key,...val}
+             
+             //     let localize_obj = {}
+             //       Object.keys(newData).map(key=>{
+               //         // debugger
+               
+               //       if(this.list.includes(key)) {
+                 
+                 //         delete newData[key]
+                 
+                 //       }
+                 
+                 //       else
+                 //       {
+                   
+                   //           if(key == "measures")
+                   //           {
+                     //             localize_obj = {...localize_obj,[Config[key][this.state.lang]]:Config[newData[key]][this.state.lang]}
+                     //           }
+                     
+                     //           else
+                     //           {
+                       
+                       //             localize_obj = {...localize_obj,[Config[key][this.state.lang]]:newData[key]}
+                       //           }
+                       
+                       
+                       
+                       
+                       //       }
+                       
+                       
+                       
+                       
+                       //         // newObj={...newData}
+                       
+                       
+                       //       })
+                       //       this.state.afterFormat.push(localize_obj)
+                       //   }
+                       
+                       
+                       // })
+                       // })
+                       this.state.dataReq.map(item=>{
+                         
+                         return callback(item)
+                        })
+                      }
+                      
+                    }
 
     reformatData = () => {
 
@@ -238,6 +308,7 @@ class App extends Component {
             });
             colKeys.map(function (c) {
               var v = pivotData.getAggregator(r, c).value();
+              console.log("vv",v)
               row.push(v ? v : '');
             });
             return row;
@@ -267,44 +338,110 @@ class App extends Component {
           alert("No Selections Made")
         }
       }
-componentDidUpdate(){
+// componentDidUpdate(){
 
-  const attributes = document.querySelectorAll('.pvtColLabel')
-  // attributes[0].addEventListener("click",function(){
-    console.log(attributes)
-  // })
-  attributes.forEach((cur,i)=>{
-  //   console.log(cur.innerHTML)
-  //   const div =document.createElement("div")
-  //   const arrow=document.createElement("span")
-  //   arrow.className = cur.innerHTML; 
-  // cur.innerHTML=
-    cur.addEventListener("click",function(e){
-      // console.log(e.target.value)
-        if(this.state.isClicked==false){
   
-          this.setState({isClicked:true});
-        }else{
-          this.setState({isClicked:false});
+//   const attributes = document.querySelectorAll('.pvtColLabel')
+//   // attributes[0].addEventListener("click",function(){
+//     console.log(attributes)
+//   // })
+//   attributes.forEach((cur,i)=>{
+//   //   console.log(cur.innerHTML)
+//   //   const div =document.createElement("div")
+//   //   const arrow=document.createElement("span")
+//   //   arrow.className = cur.innerHTML; 
+//   // cur.innerHTML=
+//     cur.addEventListener("click",function(e){
+//       // console.log(e.target.value)
+//         if(this.state.isClicked==false){
   
-        }
-        console.log(this.state.isClicked)
-    })
-    // cur.click()
-  })
-}
+//           this.setState({isClicked:true});
+//         }else{
+//           this.setState({isClicked:false});
+  
+//         }
+//         console.log(this.state.isClicked)
+//     })
+//     // cur.click()
+//   })
+// }
 
      async componentDidMount()
       {
           
-      
+        document.querySelector('.pvtTable').style.display="none"
         
         const config= await GetConfigurationData();
         console.log("aaa",config)
-this.setState({configData:config})
+        this.setState({configData:config})
        // console.log(this.data2)
        const configsss= await GetPivotKeys();
        console.log("aaa",configsss)
+
+
+        axios.get('GetPivotKeysConfig').then(response=>{
+
+          console.log("response",response.data)
+
+          let data = response.data
+
+          let tempData = []
+          let tempFilters = []
+          let tempMeasures = []
+          let tempFunctions = []
+          data.map(item=>{
+
+            if(item.TYPE == "D")
+            {
+              if(this.state.lang == "En_name")
+              {
+                tempData.push({[item.EN_NAME]:item.KEY})
+                // tempFilters.push({[item.EN_NAME]:item.KEY})
+                console.log("fff",item)
+                tempFilters.push({"key":item.KEY,"value":item.EN_NAME,"list":item.data})
+              }
+              else
+              {
+                tempData.push({[item.AR_NAME]:item.key})
+                tempFilters.push({"key":item.KEY,"value":item.AR_NAME,"list":item.data})
+              }
+            }
+
+            else if(item.TYPE == "M")
+            {
+              if(this.state.lang == "En_name")
+              {
+                tempData.push({[item.EN_NAME]:item.KEY})
+                tempMeasures.push({"key":item.KEY,"value":item.EN_NAME})
+                // tempMeasures.push({[item.EN_NAME]:item.KEY})
+              }
+              else
+              {
+                tempData.push({[item.AR_NAME]:item.KEY})
+              
+                tempMeasures.push({"key":item.KEY,"value":item.AR_NAME})
+              }
+            }
+
+            else if(item.TYPE == "F")
+            {
+             
+                tempFunctions.push(item)
+             
+            }
+          })
+
+         
+
+          this.setState({dataa:tempData,filterList:tempFilters,measureList:tempMeasures,functionList:tempFunctions})
+
+        }).catch(error=>{
+
+
+          console.log("error",error)
+        })
+        //////////////////////////// drilled down///////////////
+      // console.log(this.data2)
 
           // setInterval(()=>{
 
@@ -358,6 +495,7 @@ this.setState({configData:config})
     }
     render() {
 
+      console.log("data",this.state.dataa)
 
         // console.log("Filter 1",typeof this.state.filter1)
         // var count = (data, rowKey, colKey) => {
@@ -377,7 +515,7 @@ this.setState({configData:config})
               return {
                   
               sum:0,
-              push: function(record) { this.sum =record[filter1];},
+              push: function(record) { this.sum =record[filter1];console.log(record[filter1])},
               value: function() { return 0; },
               format: function(x) { return this.sum },
            };
@@ -405,9 +543,11 @@ this.setState({configData:config})
             };
           }
 
-          console.log("filter key",this.state.filterKey)
-          console.log("filter value",this.state.filterValue)
+          // console.log("filter key",this.state.filterKey)
+          // console.log("filter value",this.state.filterValue)
         console.log("filters",this.state.filters)
+
+        console.log("measures",this.state.measures)
         return (
             <div>
 
@@ -526,7 +666,7 @@ this.setState({configData:config})
                     value={this.state.filter1}>
                         <option style={{display:"none"}}></option>
                         {
-                            Object.keys(this.state.dataa[0]).map(key=>{
+                            Object.keys(this.state.dataa.length > 0?this.state.dataa[0]:[]).map(key=>{
 
                                 return <option>{key}</option>
                             })
@@ -539,7 +679,7 @@ this.setState({configData:config})
                     value={this.state.filter1}>
                     <option style={{display:"none"}}></option>
                     {
-                        Object.keys(this.state.dataa[0]).map(key=>{
+                        Object.keys(this.state.dataa.length > 0?this.state.dataa[0]:[]).map(key=>{
 
                             return <option>{key}</option>
                         })
@@ -551,34 +691,152 @@ this.setState({configData:config})
 
                  <div>
                    <label>Filters : </label>
-                   <input type="text" onChange={(e)=>this.setState({filterKey:e.target.value})} />
-                   
-                   <input type="text" onChange={(e)=>this.setState({filterValue:e.target.value})} />
+
+                   <select value={this.state.filterIndex !== -1 ?this.state.filterList[this.state.filterIndex-1].value:""} onChange={(e)=>{
+
+                      console.log("index",this.state.filterList[e.target.selectedIndex - 1])
+
+
+                     this.setState({filterIndex:e.target.selectedIndex,filterListValue:this.state.filterList[e.target.selectedIndex - 1].list})
+                    }
+                     }>
+                     <option style={{display:"none"}}></option>
+                     {
+                           this.state.filterList.map(item=>{
+
+                                return <option>{item.value}</option>
+                            })
+                        }
+
+                   </select>
+
+
+                   {this.state.filterIndex !== -1&&this.state.filterListValue !== undefined&&<select value={this.state.filterListValueIndex !== -1 ?this.state.filterListValue[this.state.filterListValueIndex-1].value:""} 
+                   onChange={(e)=>{
+
+                      this.setState({filterListValueIndex:e.target.selectedIndex})
+                      }
+                      }>
+                      <option style={{display:"none"}}></option>
+                      {
+                          this.state.filterListValue.map(item=>{
+                                if(this.state.lang == "En_name")
+                                {
+                                  return <option>{item.NAME}</option>
+                                }
+                                else
+                                {
+                                  return <option>{item.AR_NAME}</option>
+                                }
+                                
+                            })
+                        }
+
+                    </select>}
+     
+
 
                    <button onClick={()=>{
 
-                    let obj = {[this.state.filterKey]:this.state.filterValue}
-                    this.setState({filters:[...this.state.filters,obj]})
+                    //  console.log(this.state.filterList[this.state.filterIndex - 1])
+
+                    let obj = {[this.state.filterList[this.state.filterIndex - 1].key]:this.state.filterListValue[this.state.filterListValueIndex - 1].ID}
+
+                    let index = this.state.filters.findIndex(item=>item[this.state.filterList[this.state.filterIndex - 1].KEY] == this.state.filterList[this.state.filterIndex - 1].KEY)
+
+                    if(index != -1)
+                    {
+                      let old_obj = this.state.filters[index]
+                      let new_obj = {[this.state.filterList[this.state.filterIndex - 1].key]:old_obj[this.state.filterList[this.state.filterIndex - 1].key] + "," +  this.state.filterListValue[this.state.filterListValueIndex - 1].ID}
+
+                      this.state.filters[index] = new_obj
+
+                      this.setState({filters:this.state.filters})
+                    }
+
+                    else
+                    {
+                      this.setState({filters:[...this.state.filters,obj]})
+                    }
+                    
                     //  this.setState({filters:[...this.state.filters,[this.state.filterKey]:this.state.filterValue}])
                    }}>Add</button>
-
+ 
                    <br/>
 
                    <label>Measures : </label>
-                   <input type="text" onChange={(e)=>this.setState({measureKey:e.target.value})} />
+
+                   <select value={this.state.measureIndex !== -1 ?this.state.measureList[this.state.measureIndex-1].value:"" } 
+                    onChange={(e)=>this.setState({measureIndex:e.target.selectedIndex})}>
+                   <option style={{display:"none"}}></option>
+                     {
+                           this.state.measureList.map(item=>{
+                                console.log(item)
+                              
+                                  return <option>{item.value}</option>
+                              
+                            })
+                        }
+                   </select>
+                   {/* <input type="text" onChange={(e)=>this.setState({measureKey:e.target.value})} /> */}
+
+                   <select value={this.state.measureValue} onChange={(e)=>this.setState({measureValue:e.target.value})} >
+                   <option style={{display:"none"}}></option>
+                    <option>Count</option>
+                    <option>Sum</option>
+                  
+                   </select>
                    
-                   <input type="text" onChange={(e)=>this.setState({measureValue:e.target.value})} />
+                   {/* <input type="text" onChange={(e)=>this.setState({measureValue:e.target.value})} /> */}
 
                    <button onClick={()=>{
 
-                    let obj = {[this.state.measureKey]:this.state.measureValue}
+                    let obj = {"key":this.state.measureList[this.state.measureIndex-1].key,"value":this.state.measureValue}
                     this.setState({measures:[...this.state.measures,obj]})
                     //  this.setState({filters:[...this.state.filters,[this.state.filterKey]:this.state.filterValue}])
                    }}>Add</button>
 
+
+                    <br/>
+
+                  <label>Functions : </label>
+
+                  <select value={this.state.functionIndex !== -1 ?this.state.functionList[this.state.functionIndex-1].value:""}  
+                  onChange={(e)=>this.setState({functionIndex:e.target.selectedIndex})} >
+                  <option style={{display:"none"}}></option>
+                    {
+                          this.state.functionList.map(item=>{
+                              if(this.state.lang == "En_name")
+                              {
+                                return <option>{item.EN_NAME}</option>
+                              }
+
+                              else
+                              {
+
+                                return <option>{item.AR_NAME}</option>
+                              }
+                              
+                          })
+                      }
+                  </select>
+                  {/* <input type="text" onChange={(e)=>this.setState({measureKey:e.target.value})} /> */}
+
+                  
+
+                  {/* <input type="text" onChange={(e)=>this.setState({measureValue:e.target.value})} /> */}
+
+                  <button onClick={()=>{
+
+                  let obj = {"key":this.state.functionList[this.state.functionIndex-1].KEY}
+                  this.setState({measures:[...this.state.measures,obj]})
+                  //  this.setState({filters:[...this.state.filters,[this.state.filterKey]:this.state.filterValue}])
+                  }}>Add</button>
+
                  </div>
+                 <button onClick={this.handleApply}>apply</button>
                 <PivotTableUI
-                    data={this.pdata}
+                    data={this.state.dataa}
                     onChange={s => {
                         console.log("table data",s)
                         if(s.rows.includes("damen_fee"))
