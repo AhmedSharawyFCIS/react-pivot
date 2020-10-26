@@ -9,6 +9,7 @@ import {en_list,en2} from './data'
 import Config from './config';
 import './style.css';
 import { PivotData } from 'react-pivottable/Utilities';
+import {GetPivotData,GetConfigurationData,GetPivotKeys}  from "../service";  
 // import "@gooddata/sdk-ui-pivot/styles/css/main.css";
 // import { PivotTable } from "@gooddata/sdk-ui-pivot";
 const Plot = createPlotlyComponent(Plotly);
@@ -16,71 +17,97 @@ const Plot = createPlotlyComponent(Plotly);
 const PlotlyRenderers = createPlotlyRenderers(Plot);
 
 class App extends Component {
-   
 
    
      
-    state = {filters:[],filterKey:"",filterValue:"",measures:[],measureKey:"",measureValue:"",afterFormat:[],dataa:en_list,newFormat:[],rows:[],cols:[],rendererName:"Table",aggregatorName:"sum_square",vals:[],filter1:"القيمة",filter2:"",lang:"Ar_name"}
+    state = {dataReq:[],configData:[],pivotData:{
+      x_values:["gov_code"],
+      y_values:["created_at","date_year"],
+      measures:[{key:"total_amount",value:"sum"},{key:"total_amount",value:"count"},{key:"damen_n_min"}],
+      filters:[{date_day_range:{date_day_start:"21-07-2020",date_day_end:"24-07-2020"},gov_code:"31,1"}]
+  }
+  ,isClicked:false,filters:[],filterKey:"",filterValue:"",measures:[],measureKey:"",measureValue:"",afterFormat:[],dataa:en_list,newFormat:[],rows:[],cols:[],rendererName:"Table",aggregatorName:"sum_square",vals:[],filter1:"value",filter2:"",lang:"En_name"}
     list=["total_amount","total_revenue","number_of_transactions"]
     excludeArr = ["Count","Count as fraction of Total"]
   
-
-    data = (callback)  => {
-      this.state.dataa.map(item=>{
-        // let newData={}
-        var newObj={}
+     mapCases=["gov_code"]
+    pdata = async (callback)  => {
+      const data1 = await GetPivotData(this.state.pivotData);
+      // debugger
+      console.log("hhhhh",data1)
+      this.setState({dataReq:data1})
+      console.log(this.state.dataReq)
+      debugger
+      this.state.dataReq.map(item=>{
         Object.keys(item).map(key=>{
-          // debugger
-          
-        if(this.list.includes(key)) {
+          const k =key.toLocaleLowerCase()
+          if(this.mapCases.includes(k)){
+          debugger
+           const rec =this.state.configData.find(el=>el.KEY==k)
+           const code =item[key]
+        const obj=   rec.data.find(el=>el.ID==code)
+        item[key]=obj.NAME
+          }
+        })
+      })
+      console.log(this.state.dataReq)
 
-          const val={value:item[key]}
-          delete item[key]
-          var  newData={...item,measures: key,...val}
+      // this.state.dataa.map(item=>{
+      // // debugger
+      //   // let newData={}
+      //   var newObj={}
+      //   Object.keys(item).map(key=>{
+      //     // debugger
           
-          let localize_obj = {}
-            Object.keys(newData).map(key=>{
-              // debugger
+      //   if(this.list.includes(key)) {
+
+      //     const val={value:item[key]}
+      //     delete item[key]
+      //     var  newData={...item,measures: key,...val}
+          
+      //     let localize_obj = {}
+      //       Object.keys(newData).map(key=>{
+      //         // debugger
               
-            if(this.list.includes(key)) {
+      //       if(this.list.includes(key)) {
             
-              delete newData[key]
+      //         delete newData[key]
               
-            }
+      //       }
 
-            else
-            {
+      //       else
+      //       {
 
-                if(key == "measures")
-                {
-                  localize_obj = {...localize_obj,[Config[key][this.state.lang]]:Config[newData[key]][this.state.lang]}
-                }
+      //           if(key == "measures")
+      //           {
+      //             localize_obj = {...localize_obj,[Config[key][this.state.lang]]:Config[newData[key]][this.state.lang]}
+      //           }
 
-                else
-                {
+      //           else
+      //           {
 
-                  localize_obj = {...localize_obj,[Config[key][this.state.lang]]:newData[key]}
-                }
+      //             localize_obj = {...localize_obj,[Config[key][this.state.lang]]:newData[key]}
+      //           }
               
                 
               
               
-            }
+      //       }
 
 
               
             
-              // newObj={...newData}
+      //         // newObj={...newData}
 
 
-            })
-            this.state.afterFormat.push(localize_obj)
-        }
+      //       })
+      //       this.state.afterFormat.push(localize_obj)
+      //   }
        
   
-      })
-      })
-    this.state.afterFormat.map(item=>{
+      // })
+      // })
+      this.state.dataReq.map(item=>{
       return callback(item)
     })
     }
@@ -165,12 +192,22 @@ class App extends Component {
     newMeasure=()=>{
 
     }
+    // test=()=>{
+    //   this.setState({rows:[...this.state.cols,...this.state.rows]})
+    //   this.setState({cols:[]})
+    // }
      exportdata = () => {
-        if(this.state.dataa.length > 0){
-          var pivotData = new PivotData(this.state);
+      //  this.test()
+      //  debugger
+        if(this.state.afterFormat.length > 0){
+          const newState= {...this.state}
+        newState.rows=[...this.state.cols,...this.state.rows]
+        newState.cols=[]
+          var pivotData = new PivotData(newState);
           
           var rowKeys = pivotData.getRowKeys();
           var colKeys = pivotData.getColKeys();
+          console.log(rowKeys)
           if (rowKeys.length === 0) {
             rowKeys.push([]);
           }
@@ -243,17 +280,31 @@ componentDidUpdate(){
   //   arrow.className = cur.innerHTML; 
   // cur.innerHTML=
     cur.addEventListener("click",function(e){
-      console.log("drilled")
       // console.log(e.target.value)
+        if(this.state.isClicked==false){
+  
+          this.setState({isClicked:true});
+        }else{
+          this.setState({isClicked:false});
+  
+        }
+        console.log(this.state.isClicked)
     })
     // cur.click()
   })
 }
 
-      componentDidMount()
+     async componentDidMount()
       {
-        //////////////////////////// drilled down///////////////
-      // console.log(this.data2)
+          
+      
+        
+        const config= await GetConfigurationData();
+        console.log("aaa",config)
+this.setState({configData:config})
+       // console.log(this.data2)
+       const configsss= await GetPivotKeys();
+       console.log("aaa",configsss)
 
           // setInterval(()=>{
 
@@ -378,10 +429,12 @@ componentDidUpdate(){
                     <button onClick={this.changeLanguage}>
                         Change Language
                     </button>
-                    
+                    <div  onClick={this.test}>
                     <button onClick={this.exportdata}>
                         Export to Excel
                     </button>
+
+                    </div>
                     <button onClick={()=>{
                         
                         if(this.state.dataa.length > 2000)
@@ -525,7 +578,7 @@ componentDidUpdate(){
 
                  </div>
                 <PivotTableUI
-                    data={this.data}
+                    data={this.pdata}
                     onChange={s => {
                         console.log("table data",s)
                         if(s.rows.includes("damen_fee"))
