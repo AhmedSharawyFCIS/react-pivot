@@ -111,8 +111,8 @@ console.log(this.state.dataReq)
            debugger
             const rec =this.state.configData.find(el=>el.KEY==k)
             const code =item[key]
-            const obj=   rec.data.find(el=>el.ID==code)
-            item[key]=obj.NAME
+            const obj=   rec.data.find(el=>el.id==code)
+            item[key]=obj.en_name
            }
          })
         })
@@ -515,7 +515,7 @@ console.log(this.state.dataReq)
               return {
                   
               sum:0,
-              push: function(record) { this.sum =record[filter1];console.log(record[filter1])},
+              push: function(record) { this.sum =record[filter1];},
               value: function() { return 0; },
               format: function(x) { return this.sum },
            };
