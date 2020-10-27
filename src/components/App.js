@@ -808,13 +808,13 @@ console.log(this.state.dataReq)
                           this.state.functionList.map(item=>{
                               if(this.state.lang == "En_name")
                               {
-                                return <option>{item.EN_NAME}</option>
+                                return <option>{item.en_name}</option>
                               }
 
                               else
                               {
 
-                                return <option>{item.AR_NAME}</option>
+                                return <option>{item.ar_name}</option>
                               }
                               
                           })
