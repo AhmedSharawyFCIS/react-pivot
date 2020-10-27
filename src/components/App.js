@@ -740,14 +740,14 @@ console.log(this.state.dataReq)
 
                     //  console.log(this.state.filterList[this.state.filterIndex - 1])
 
-                    let obj = {[this.state.filterList[this.state.filterIndex - 1].key]:this.state.filterListValue[this.state.filterListValueIndex - 1].ID}
+                    let obj = {[this.state.filterList[this.state.filterIndex - 1].key]:this.state.filterListValue[this.state.filterListValueIndex - 1].id}
 
-                    let index = this.state.filters.findIndex(item=>item[this.state.filterList[this.state.filterIndex - 1].KEY] == this.state.filterList[this.state.filterIndex - 1].KEY)
+                    let index = this.state.filters.findIndex(item=>item[this.state.filterList[this.state.filterIndex - 1].key] == this.state.filterList[this.state.filterIndex - 1].key)
 
                     if(index != -1)
                     {
                       let old_obj = this.state.filters[index]
-                      let new_obj = {[this.state.filterList[this.state.filterIndex - 1].key]:old_obj[this.state.filterList[this.state.filterIndex - 1].key] + "," +  this.state.filterListValue[this.state.filterListValueIndex - 1].ID}
+                      let new_obj = {[this.state.filterList[this.state.filterIndex - 1].key]:old_obj[this.state.filterList[this.state.filterIndex - 1].key] + "," +  this.state.filterListValue[this.state.filterListValueIndex - 1].id}
 
                       this.state.filters[index] = new_obj
 
@@ -801,7 +801,7 @@ console.log(this.state.dataReq)
 
                   <label>Functions : </label>
 
-                  <select value={this.state.functionIndex !== -1 ?this.state.functionList[this.state.functionIndex-1].value:""}  
+                  <select value={this.state.functionIndex !== -1 ?this.state.functionList[this.state.functionIndex-1][this.state.lang.toLowerCase()]:""}  
                   onChange={(e)=>this.setState({functionIndex:e.target.selectedIndex})} >
                   <option style={{display:"none"}}></option>
                     {
@@ -828,7 +828,8 @@ console.log(this.state.dataReq)
 
                   <button onClick={()=>{
 
-                  let obj = {"key":this.state.functionList[this.state.functionIndex-1].KEY}
+                    
+                  let obj = {"key":this.state.functionList[this.state.functionIndex-1].key}
                   this.setState({measures:[...this.state.measures,obj]})
                   //  this.setState({filters:[...this.state.filters,[this.state.filterKey]:this.state.filterValue}])
                   }}>Add</button>
