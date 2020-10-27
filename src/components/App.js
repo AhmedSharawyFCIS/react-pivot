@@ -375,8 +375,8 @@ console.log(this.state.dataReq)
         console.log("aaa",config)
         this.setState({configData:config})
        // console.log(this.data2)
-       const configsss= await GetPivotKeys();
-       console.log("aaa",configsss)
+      //  const configsss= await GetPivotKeys();
+      //  console.log("aaa",configsss)
 
 
         axios.get('GetPivotKeysConfig').then(response=>{
@@ -391,39 +391,39 @@ console.log(this.state.dataReq)
           let tempFunctions = []
           data.map(item=>{
 
-            if(item.TYPE == "D")
+            if(item.type == "D")
             {
               if(this.state.lang == "En_name")
               {
-                tempData.push({[item.EN_NAME]:item.KEY})
+                tempData.push({[item.en_name]:item.key})
                 // tempFilters.push({[item.EN_NAME]:item.KEY})
                 console.log("fff",item)
-                tempFilters.push({"key":item.KEY,"value":item.EN_NAME,"list":item.data})
+                tempFilters.push({"key":item.key,"value":item.en_name,"list":item.data})
               }
               else
               {
-                tempData.push({[item.AR_NAME]:item.key})
-                tempFilters.push({"key":item.KEY,"value":item.AR_NAME,"list":item.data})
+                tempData.push({[item.ar_name]:item.key})
+                tempFilters.push({"key":item.key,"value":item.ar_nameE,"list":item.data})
               }
             }
 
-            else if(item.TYPE == "M")
+            else if(item.type == "M")
             {
               if(this.state.lang == "En_name")
               {
-                tempData.push({[item.EN_NAME]:item.KEY})
-                tempMeasures.push({"key":item.KEY,"value":item.EN_NAME})
+                tempData.push({[item.en_name]:item.key})
+                tempMeasures.push({"key":item.key,"value":item.en_name})
                 // tempMeasures.push({[item.EN_NAME]:item.KEY})
               }
               else
               {
-                tempData.push({[item.AR_NAME]:item.KEY})
+                tempData.push({[item.ar_name]:item.key})
               
-                tempMeasures.push({"key":item.KEY,"value":item.AR_NAME})
+                tempMeasures.push({"key":item.key,"value":item.ar_name})
               }
             }
 
-            else if(item.TYPE == "F")
+            else if(item.type == "F")
             {
              
                 tempFunctions.push(item)
