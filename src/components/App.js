@@ -63,15 +63,15 @@ class App extends Component {
   
      mapCases=["gov_code"]
      handleApply=async()=>{
-debugger;
+      debugger;
+      
+      let rows = []
+      let cols = []
 
-let rows = []
-let cols = []
 
 
-
-  this.state.dataa.map(item=>{
-    Object.keys(item).map(key=>{
+      this.state.dataa.map(item=>{
+        Object.keys(item).map(key=>{
        
       if(this.state.rows.includes(key))
       {
@@ -85,25 +85,25 @@ let cols = []
       }
 
     })
-    
-  })
-  this.setState({rows})
-  this.setState({cols})
+        
+      })
+      this.setState({rows})
+      this.setState({cols})
 
-const pivotData ={
-x_values: rows,
-y_values:cols,
-measures:this.state.measures,
-filters:this.state.filters
-}
-console.log(pivotData)
-const data1 = await GetPivotData(pivotData);
-// debugger
-console.log("hhhhh",data1)
-this.setState({dataReq:data1})
-console.log(this.state.dataReq)
-    const   pdata =  (callback)  => {
+      const pivotData ={
+      x_values: rows,
+      y_values:cols,
+      measures:this.state.measures,
+      filters:this.state.filters
+      }
+      console.log(pivotData)
+      const data1 = await GetPivotData(pivotData);
+      
+      this.setState({dataReq:data1})
+
+  
        debugger
+       console.log("KKKKKKKKKKKKKKKKKKKK")
        this.state.dataReq.map(item=>{
          Object.keys(item).map(key=>{
            const k =key.toLocaleLowerCase()
@@ -120,69 +120,65 @@ console.log(this.state.dataReq)
        document.querySelector('.pvtTable').style.display="block"
        this.setState({dataa:this.state.dataReq})
        console.log(this.state.dataa)
-       // this.state.dataa.map(item=>{
-         // // debugger
-         //   // let newData={}
-         //   var newObj={}
-         //   Object.keys(item).map(key=>{
-           //     // debugger
-           
-           //   if(this.list.includes(key)) {
-             
-             //     const val={value:item[key]}
-             //     delete item[key]
-             //     var  newData={...item,measures: key,...val}
-             
-             //     let localize_obj = {}
-             //       Object.keys(newData).map(key=>{
-               //         // debugger
-               
-               //       if(this.list.includes(key)) {
-                 
-                 //         delete newData[key]
-                 
-                 //       }
-                 
-                 //       else
-                 //       {
-                   
-                   //           if(key == "measures")
-                   //           {
-                     //             localize_obj = {...localize_obj,[Config[key][this.state.lang]]:Config[newData[key]][this.state.lang]}
-                     //           }
-                     
-                     //           else
-                     //           {
-                       
-                       //             localize_obj = {...localize_obj,[Config[key][this.state.lang]]:newData[key]}
-                       //           }
-                       
-                       
-                       
-                       
-                       //       }
-                       
-                       
-                       
-                       
-                       //         // newObj={...newData}
-                       
-                       
-                       //       })
-                       //       this.state.afterFormat.push(localize_obj)
-                       //   }
-                       
-                       
-                       // })
-                       // })
-                       this.state.dataReq.map(item=>{
-                         
-                         return callback(item)
-                        })
-                      }
-                      
-                    }
-
+     
+      
+    }
+    
+    // this.state.dataa.map(item=>{
+      // // debugger
+      //   // let newData={}
+      //   var newObj={}
+      //   Object.keys(item).map(key=>{
+        //     // debugger
+        
+        //   if(this.list.includes(key)) {
+          
+          //     const val={value:item[key]}
+          //     delete item[key]
+          //     var  newData={...item,measures: key,...val}
+          
+          //     let localize_obj = {}
+          //       Object.keys(newData).map(key=>{
+            //         // debugger
+            
+            //       if(this.list.includes(key)) {
+              
+              //         delete newData[key]
+              
+              //       }
+              
+              //       else
+              //       {
+                
+                //           if(key == "measures")
+                //           {
+                  //             localize_obj = {...localize_obj,[Config[key][this.state.lang]]:Config[newData[key]][this.state.lang]}
+                  //           }
+                  
+                  //           else
+                  //           {
+                    
+                    //             localize_obj = {...localize_obj,[Config[key][this.state.lang]]:newData[key]}
+                    //           }
+                    
+                    
+                    
+                    
+                    //       }
+                    
+                    
+                    
+                    
+                    //         // newObj={...newData}
+                    
+                    
+                    //       })
+                    //       this.state.afterFormat.push(localize_obj)
+                    //   }
+                    
+                    
+                    // })
+                    // })
     reformatData = () => {
 
 
