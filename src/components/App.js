@@ -415,7 +415,7 @@ class App extends Component {
               }
             }
 
-            else if(item.type == "M")
+            else if(item.type == "M"&&item.key !== "total_count")
             {
               if(this.state.lang == "En_name")
               {
