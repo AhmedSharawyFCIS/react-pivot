@@ -89,13 +89,34 @@ class App extends Component {
       })
       this.setState({rows})
       this.setState({cols})
-
-      const pivotData ={
-      x_values: rows,
-      y_values:cols,
-      measures:this.state.measures,
-      filters:this.state.filters
+      let pivotData
+      
+if(rows.length==0){
+debugger
+   pivotData ={
+  x_values: null,
+  y_values:cols,
+  measures:this.state.measures,
+  filters:this.state.filters
+  }
+}
+else if (cols.length==0) {
+      pivotData ={
+        x_values:rows ,
+        y_values:null,
+        measures:this.state.measures,
+        filters:this.state.filters
+        
       }
+    
+      }else{
+        pivotData ={
+          x_values: rows,
+          y_values:cols,
+          measures:this.state.measures,
+          filters:this.state.filters
+          }
+}
       console.log(pivotData)
       const data1 = await GetPivotData(pivotData);
       
