@@ -419,13 +419,13 @@ class App extends Component {
             {
               if(this.state.lang == "En_name")
               {
-                tempData.push({[item.en_name]:item.key})
+                // tempData.push({[item.en_name]:item.key})
                 tempMeasures.push({"key":item.key,"value":item.en_name})
                 // tempMeasures.push({[item.EN_NAME]:item.KEY})
               }
               else
               {
-                tempData.push({[item.ar_name]:item.key})
+                // tempData.push({[item.ar_name]:item.key})
               
                 tempMeasures.push({"key":item.key,"value":item.ar_name})
               }
@@ -750,8 +750,11 @@ class App extends Component {
 
                     let obj = {[this.state.filterList[this.state.filterIndex - 1].key]:this.state.filterListValue[this.state.filterListValueIndex - 1].id}
 
-                    let index = this.state.filters.findIndex(item=>item[this.state.filterList[this.state.filterIndex - 1].key] == this.state.filterList[this.state.filterIndex - 1].key)
+                    console.log("ffsafsafs",this.state.filterList[this.state.filterIndex - 1])
+                    let index = this.state.filters.findIndex(item=>Object.keys(item)[0] == this.state.filterList[this.state.filterIndex - 1].key)
 
+                    console.log("index",index)
+                    console.log("obj",this.state.filterList[this.state.filterIndex - 1])
                     if(index != -1)
                     {
                       let old_obj = this.state.filters[index]
@@ -848,17 +851,19 @@ class App extends Component {
                     data={this.state.dataa}
                     onChange={s => {
                         console.log("table data",s)
-                        if(s.rows.includes("damen_fee"))
-                        {
-                            let data = s.rows
-                            let index = data.indexOf("damen_fee")
-                            console.log(index)
-                            data.splice(index,1)
-                            console.log(data)
-                            // this.setState({rows:data})
-                            this.setState(s)
-                            return
-                        }
+
+                        
+                        // if(s.rows.includes("damen_fee"))
+                        // {
+                        //     let data = s.rows
+                        //     let index = data.indexOf("damen_fee")
+                        //     console.log(index)
+                        //     data.splice(index,1)
+                        //     console.log(data)
+                        //     // this.setState({rows:data})
+                        //     this.setState(s)
+                        //     return
+                        // }
                         this.setState(s)
                     }}
                     renderers={Object.assign({}, TableRenderers, PlotlyRenderers)}
