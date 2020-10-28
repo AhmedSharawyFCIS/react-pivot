@@ -55,7 +55,9 @@ class App extends Component {
       filterListValueIndex:-1,
       filterIndex:-1,
 
-      measureIndex:-1
+      measureIndex:-1,
+      startDate:"",
+      endDate:""
       
     }
     list=["total_amount","total_revenue","number_of_transactions"]
@@ -866,6 +868,23 @@ else if (cols.length==0) {
                   //  this.setState({filters:[...this.state.filters,[this.state.filterKey]:this.state.filterValue}])
                   }}>Add</button>
 
+
+                  <br/>
+
+                  <label>Date Range : </label>
+                  <label>Start Date : </label>
+                  <input type="date" onChange={(e)=>this.setState({startDate:e.target.value.split("-").reverse().join("-")})} />
+                  <label>  End Date : </label>
+                  <input type="date" onChange={(e)=>this.setState({endDate:e.target.value.split("-").reverse().join("-")})} />
+
+                  <button onClick={()=>{
+
+
+                      let obj = {"date_day_range":{"date_day_start":this.state.startDate,"date_day_end":this.state.endDate}}
+                      this.setState({filters:[...this.state.filters,obj]})
+                  }}>
+                    Add
+                  </button>
                  </div>
                  <button onClick={this.handleApply}>apply</button>
                 <PivotTableUI
