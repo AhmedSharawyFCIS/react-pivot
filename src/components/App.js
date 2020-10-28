@@ -790,8 +790,8 @@ class App extends Component {
 
                    <select value={this.state.measureValue} onChange={(e)=>this.setState({measureValue:e.target.value})} >
                    <option style={{display:"none"}}></option>
-                    <option>Count</option>
-                    <option>Sum</option>
+                    <option>count</option>
+                    <option>sum</option>
                   
                    </select>
                    
