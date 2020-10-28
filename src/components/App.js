@@ -108,8 +108,8 @@ class App extends Component {
          Object.keys(item).map(key=>{
            const k =key.toLocaleLowerCase()
            if(this.mapCases.includes(k)){
-           debugger
-            const rec =this.state.configData.find(el=>el.KEY==k)
+          //  debugger
+            const rec =this.state.configData.find(el=>el.key==k)
             const code =item[key]
             const obj=   rec.data.find(el=>el.id==code)
             item[key]=obj.en_name
@@ -118,8 +118,20 @@ class App extends Component {
         })
        console.log(this.state.dataReq)
        document.querySelector('.pvtTable').style.display="block"
-       this.setState({dataa:this.state.dataReq})
-       console.log(this.state.dataa)
+       this.state.dataReq.map(item=>{
+        Object.keys(item).map(key=>{
+                                    
+          if(key=="measures"){
+            if(!rows.includes(key)){
+         //  debugger
+          rows.push(key)
+           console.log("beeeeb")
+         }
+          }
+        })
+       })
+       this.setState({data:this.state.dataReq})
+       console.log(this.state.data)
      
       
     }
