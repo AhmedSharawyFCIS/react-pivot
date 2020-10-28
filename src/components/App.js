@@ -436,7 +436,7 @@ else if (cols.length==0) {
               }
             }
 
-            else if(item.type == "M")
+            else if(item.type == "M"&&item.key !== "total_count")
             {
               if(this.state.lang == "En_name")
               {
