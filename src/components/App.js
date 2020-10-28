@@ -101,6 +101,14 @@ debugger
   measures:this.state.measures,
   filters:this.state.filters
   }
+   if(this.state.filters.length==0){
+    pivotData ={
+      x_values: null,
+      y_values:cols,
+      measures:this.state.measures,
+     
+      }
+  }
 }
 else if (cols.length==0) {
       pivotData ={
@@ -110,15 +118,32 @@ else if (cols.length==0) {
         filters:this.state.filters
         
       }
-    
-      }else{
+      if(this.state.filters.length==0){
+        pivotData ={
+          x_values:rows ,
+        y_values:null,
+        measures:this.state.measures,
+         
+          }
+        }
+      }
+      else{
         pivotData ={
           x_values: rows,
           y_values:cols,
           measures:this.state.measures,
           filters:this.state.filters
+
           }
-}
+          if(this.state.filters.length==0){
+            pivotData ={
+              x_values:rows ,
+            y_values:cols,
+            measures:this.state.measures,
+             
+              }
+        }
+      }
       console.log(pivotData)
       const data1 = await GetPivotData(pivotData);
       
