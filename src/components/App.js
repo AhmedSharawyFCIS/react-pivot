@@ -498,7 +498,7 @@ else if (cols.length==0) {
 
           console.log("error",error)
         })
-        //////////////////////////// drilled down///////////////
+      //////////////////////////// drilled down///////////////
       // console.log(this.data2)
 
           // setInterval(()=>{
