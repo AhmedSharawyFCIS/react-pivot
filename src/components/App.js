@@ -179,7 +179,7 @@ else if (cols.length==0) {
           }
         })
        })
-       this.setState({data:this.state.dataReq,hiddenAttributes:["measures","value"]})
+       this.setState({data:this.state.dataReq,hiddenAttributes:["value"]})
 
        document.querySelectorAll(".pvtTable").forEach(el => el.style.display = "block")
        console.log(this.state.data)
@@ -425,21 +425,7 @@ else if (cols.length==0) {
 //   })
 // }
 
-     async componentDidMount()
-      {
-          
-        // document.querySelectorAll('.pvtTable').style.display="none"
-        
-
-        document.querySelectorAll(".pvtTable").forEach(el => el.style.display = "none")
-        
-        const config= await GetConfigurationData();
-        console.log("aaa",config)
-        this.setState({configData:config})
-       // console.log(this.data2)
-      //  const configsss= await GetPivotKeys();
-      //  console.log("aaa",configsss)
-
+      getKeys = () => {
 
         axios.get('GetPivotKeysConfig').then(response=>{
 
@@ -465,7 +451,7 @@ else if (cols.length==0) {
               else
               {
                 tempData.push({[item.ar_name]:item.key})
-                tempFilters.push({"key":item.key,"value":item.ar_nameE,"list":item.data})
+                tempFilters.push({"key":item.key,"value":item.ar_name,"list":item.data})
               }
             }
 
@@ -502,6 +488,29 @@ else if (cols.length==0) {
 
           console.log("error",error)
         })
+      }
+
+      // componentDidUpdate()
+      // {
+      //   this.getKeys()
+      // }
+     async componentDidMount()
+      {
+          
+        // document.querySelectorAll('.pvtTable').style.display="none"
+        
+
+        document.querySelectorAll(".pvtTable").forEach(el => el.style.display = "none")
+        
+        const config= await GetConfigurationData();
+        console.log("aaa",config)
+        this.setState({configData:config})
+       // console.log(this.data2)
+      //  const configsss= await GetPivotKeys();
+      //  console.log("aaa",configsss)
+
+
+        this.getKeys()
         //////////////////////////// drilled down///////////////
       // console.log(this.data2)
 
@@ -554,6 +563,14 @@ else if (cols.length==0) {
 
         document.querySelector('.pvtVertList').style.display="none"
       
+    }
+
+
+    changeLanguage = () => {
+
+      this.setState({lang:this.state.lang == "En_name"?"Ar_name":"En_name"})
+
+      this.getKeys()
     }
     render() {
 
@@ -846,7 +863,7 @@ else if (cols.length==0) {
                    {/* <input type="text" onChange={(e)=>this.setState({measureKey:e.target.value})} /> */}
 
                    <select value={this.state.measureValue} onChange={(e)=>this.setState({measureValue:e.target.value})} >
-                   <option style={{display:"none"}}></option>
+                    <option style={{display:"none"}}></option>
                     <option>count</option>
                     <option>sum</option>
                   
