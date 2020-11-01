@@ -64,8 +64,11 @@ class App extends Component {
     excludeArr = ["Count","Count as fraction of Total"]
   
      mapCases=["gov_code"]
+   
+   
      handleApply=async()=>{
       debugger;
+       document.querySelector('.pvtTable').style.display="block"
       
       let rows = []
       let cols = []
@@ -165,7 +168,6 @@ else if (cols.length==0) {
          })
         })
        console.log(this.state.dataReq)
-       document.querySelector('.pvtTable').style.display="block"
        this.state.dataReq.map(item=>{
         Object.keys(item).map(key=>{
                                     
