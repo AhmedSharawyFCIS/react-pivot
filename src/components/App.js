@@ -81,27 +81,16 @@ class App extends Component {
 
     let rows = [];
     let cols = [];
-    let rowsPreview = [];
-    let colsPreview = [];
+
     this.state.dataa.map((item) => {
       Object.keys(item).map((key) => {
         if (this.state.rows.includes(key)) {
           rows.push(item[key]);
           debugger;
-          if (this.state.lang === "Ar_name") {
-            // const rec = this.state.configData.find((el) => el.key == key);
-            // let newKey = rec.ar_name;
-            rowsPreview.push(key);
-          }
         }
 
         if (this.state.cols.includes(key)) {
           cols.push(item[key]);
-          if (this.state.lang === "Ar_name") {
-            // const rec = this.state.configData.find((el) => el.key == key);
-            // let newKey = rec.ar_name;
-            colsPreview.push(key);
-          }
         }
       });
     });
