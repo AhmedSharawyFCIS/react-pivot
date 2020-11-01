@@ -31,6 +31,12 @@ body{
 }
 
 
+.pvtTable{
+
+
+    display: none;
+}
+
 /* .pvtRows{
 
     background-color: red !important;
@@ -63,5 +69,6 @@ body{
     background: green;
     display: block;
 } */
+
 
 

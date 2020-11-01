@@ -165,7 +165,8 @@ else if (cols.length==0) {
          })
         })
        console.log(this.state.dataReq)
-       document.querySelector('.pvtTable').style.display="block"
+ 
+       
        this.state.dataReq.map(item=>{
         Object.keys(item).map(key=>{
                                     
@@ -178,7 +179,9 @@ else if (cols.length==0) {
           }
         })
        })
-       this.setState({data:this.state.dataReq})
+       this.setState({data:this.state.dataReq,hiddenAttributes:["measures","value"]})
+
+       document.querySelectorAll(".pvtTable").forEach(el => el.style.display = "block")
        console.log(this.state.data)
      
       
@@ -425,7 +428,10 @@ else if (cols.length==0) {
      async componentDidMount()
       {
           
-        document.querySelector('.pvtTable').style.display="none"
+        // document.querySelectorAll('.pvtTable').style.display="none"
+        
+
+        document.querySelectorAll(".pvtTable").forEach(el => el.style.display = "none")
         
         const config= await GetConfigurationData();
         console.log("aaa",config)
@@ -571,7 +577,7 @@ else if (cols.length==0) {
               return {
                   
               sum:0,
-              push: function(record) { this.sum =record[filter1];},
+              push: function(record) { this.sum +=record[filter1];},
               value: function() { return 0; },
               format: function(x) { return this.sum },
            };
@@ -943,8 +949,8 @@ else if (cols.length==0) {
 
                     vals={this.state.aggregatorFilters} // aggregator filter attribute
                     rendererName =  {this.state.rendererName}      
-                    hiddenAttributes = {[...this.state.rows,...this.state.cols]}
-
+                    // hiddenAttributes = {["value"]}
+                    // hiddenFromDragDrop = {["value"]}
                     {...this.state}
                     /> 
 
