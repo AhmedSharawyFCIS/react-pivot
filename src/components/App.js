@@ -60,7 +60,7 @@ class App extends Component {
     vals: [],
     filter1: "value",
     filter2: "",
-    lang: "Ar_name",
+    lang: "En_name",
 
     filterListValue: [],
     filterListValueIndex: -1,
@@ -94,8 +94,6 @@ class App extends Component {
         }
       });
     });
-    this.setState({ rows });
-    this.setState({ cols });
     let pivotData;
     if (rows.length == 0) {
       // debugger;
@@ -141,9 +139,12 @@ class App extends Component {
         };
       }
     }
+    this.setState({ rows });
+    this.setState({ cols });
+    // this.setState({ rows: rowsPreview });
+    // this.setState({ cols: colsPreview });
     console.log(pivotData);
     const data1 = await GetPivotData(pivotData);
-
     this.setState({ dataReq: data1 });
 
     console.log("KKKKKKKKKKKKKKKKKKKK");
