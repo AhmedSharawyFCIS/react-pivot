@@ -181,8 +181,11 @@ else if (cols.length==0) {
        })
        this.setState({data:this.state.dataReq,hiddenAttributes:["value"]})
 
+
+    
        document.querySelectorAll(".pvtTable").forEach(el => el.style.display = "block")
-       console.log(this.state.data)
+    
+      
      
       
     }
@@ -953,6 +956,12 @@ else if (cols.length==0) {
                         //     return
                         // }
                         this.setState(s)
+
+                        if(this.state.dataReq.length > 0)
+                        {
+                         document.querySelectorAll(".pvtTable").forEach(el => el.style.display = "block")
+                        }
+                        // console.log("data Req",this.state.dataReq)
                     }}
                     renderers={Object.assign({}, TableRenderers, PlotlyRenderers)}
                     rows = {this.state.rows}
