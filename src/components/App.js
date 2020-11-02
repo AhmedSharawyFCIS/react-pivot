@@ -60,7 +60,7 @@ class App extends Component {
     vals: [],
     filter1: "value",
     filter2: "",
-    lang: "Ar_name",
+    lang: "En_name",
 
     filterListValue: [],
     filterListValueIndex: -1,
@@ -77,7 +77,7 @@ class App extends Component {
 
   handleApply = async () => {
     // debugger;
-    document.querySelector(".pvtTable").style.display = "block";
+    // document.querySelector(".pvtTable").style.display = "block";
 
     let rows = [];
     let cols = [];
@@ -959,6 +959,11 @@ class App extends Component {
             //     return
             // }
             this.setState(s);
+
+            if(this.state.dataReq.length > 0)
+            {
+              document.querySelectorAll(".pvtTable").forEach((el) => (el.style.display = "block"));
+            }
           }}
           renderers={Object.assign({}, TableRenderers, PlotlyRenderers)}
           rows={this.state.rows}
