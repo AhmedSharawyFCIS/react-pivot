@@ -60,7 +60,7 @@ class App extends Component {
     vals: [],
     filter1: "value",
     filter2: "",
-    lang: "En_name",
+    lang: "Ar_name",
 
     filterListValue: [],
     filterListValueIndex: -1,
@@ -81,19 +81,32 @@ class App extends Component {
 
     let rows = [];
     let cols = [];
-
+    let rowsPreview = [];
+    let colsPreview = [];
     this.state.dataa.map((item) => {
       Object.keys(item).map((key) => {
         if (this.state.rows.includes(key)) {
           rows.push(item[key]);
           debugger;
+          // if (this.state.lang === "Ar_name") {
+          //   // const rec = this.state.configData.find((el) => el.key == key);
+          //   // let newKey = rec.ar_name;
+          //   rowsPreview.push(key)
+          // }
         }
 
         if (this.state.cols.includes(key)) {
           cols.push(item[key]);
+          // if (this.state.lang === "Ar_name") {
+          //   // const rec = this.state.configData.find((el) => el.key == key);
+          //   // let newKey = rec.ar_name;
+          //   colsPreview.push(key)
+          // }
         }
       });
     });
+    this.setState({ rows });
+    this.setState({ cols });
     let pivotData;
     if (rows.length == 0) {
       // debugger;
@@ -139,12 +152,9 @@ class App extends Component {
         };
       }
     }
-    this.setState({ rows });
-    this.setState({ cols });
-    // this.setState({ rows: rowsPreview });
-    // this.setState({ cols: colsPreview });
     console.log(pivotData);
     const data1 = await GetPivotData(pivotData);
+
     this.setState({ dataReq: data1 });
 
     console.log("KKKKKKKKKKKKKKKKKKKK");
@@ -182,8 +192,6 @@ class App extends Component {
         }
       });
     });
-    // this.setState({ rows: rowsPreview });
-    // this.setState({ cols: colsPreview });
     this.setState({ data: this.state.dataReq, hiddenAttributes: ["value"] });
 
     document
